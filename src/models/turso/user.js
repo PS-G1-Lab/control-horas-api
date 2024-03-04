@@ -22,7 +22,6 @@ export class UserModel {
         user_id UUID PRIMARY KEY NOT NULL,
         user_name TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        is_admin BOOLEAN DEFAULT FALSE,
         is_verified BOOLEAN DEFAULT FALSE,
         verification_token TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
@@ -37,8 +36,8 @@ export class UserModel {
 
     // Insert some data
     const user = await client.execute(`
-      INSERT INTO users (user_id, user_name, email, is_admin, is_verified, verification_token, password)
-      VALUES ('${randomUUID()}', 'jcap', 'jcap@jcap.com', TRUE, TRUE, '1234', '1234');
+      INSERT INTO users (user_id, user_name, email, is_verified, verification_token, password)
+      VALUES ('${randomUUID()}', 'jcap', 'jcap@jcap.com', TRUE, '1234', '1234');
     `).catch(err => {
       return { err }
     })
