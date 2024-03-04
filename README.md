@@ -40,14 +40,12 @@ The project is structured as follows:
 │   ├── index.js
 │   ├── controllers/
 │   │   └── [All the controllers]
-│   ├── database/
-│   │   ├── sqlite/
-│   │   │   └── user.js
-│   │   └── [All the layouts]
-│   ├── pages/
-│   │   └── index.astro
-│   │   └── [All the main pages]
-TODO: Add the rest of the files
+│   ├── middlewares/
+│   ├── models/
+│   │   ├── local-file-system/
+│   │   ├── turso/
+│   ├── routes/
+│   ├── schemas/
 ├── .env
 ├── package.json
 └── [Rest of the files]
