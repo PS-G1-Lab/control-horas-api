@@ -21,7 +21,7 @@ export class ReviewModel {
         title TEXT NOT NULL,
         content TEXT NOT NULL,
         rate INT NOT NULL,
-        user_id UUID NOT NULL,
+        user_id UUID,
         FOREIGN KEY (user_id) 
           REFERENCES users (user_id)
       );
