@@ -26,27 +26,27 @@ export class ReviewModel {
           REFERENCES users (user_id)
       );
     `).catch(err => {
-      console.error(err)
+      return { step: 'create', err }
     })
 
-    const userID = await client.execute(`
+    const userIdConsult = await client.execute(`
       SELECT user_id FROM users WHERE user_name = 'jcap';
     `).catch(err => {
-      console.error(err)
+      return { step: 'select', err }
     })
 
-    console.log(userID)
+    if (userIdConsult.rows.length === 0) return { status: 404, error: 'User not found' }
 
-    if (userID === undefined) {
-      return { error: 'User not found' }
-    }
+    const userId = userIdConsult.rows[0].user_id
 
-    const review = await client.execute(`
-      INSERT INTO reviews (review_id, title, content, rate, user_id)
-      VALUES ('${randomUUID()}', 'title', 'content', 3, '${userID}');'
-    `)
+    const result = await this.createNewReview({
+      title: 'your title here',
+      content: 'your content here',
+      rate: 1,
+      userId
+    })
 
-    return { review }
+    return { result }
   }
 
   static async getAll () {
@@ -57,10 +57,11 @@ export class ReviewModel {
   }
 
   static async createNewReview ({ title, content, rate, userId }) {
-    // TODO: Implement the createNewReview method
     const client = db()
-    const query = 'INSERT INTO reviews (review_id, title, content, rate) VALUES (?, ?, ?)' // TODO: Get the values from the petition
-    const result = await client.execute(query)
+    const result = await client.execute({
+      sql: 'INSERT INTO reviews VALUES (:reviewId, :title, :content, :rate, :userId)',
+      args: { reviewId: randomUUID(), title, content, rate, userId }
+    })
     return result
   }
 }
