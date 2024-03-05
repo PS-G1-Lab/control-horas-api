@@ -24,6 +24,10 @@ cd control-horas-api
 pnpm install
 ```
 
+### Environment Variables
+
+Copy the `.env.copy` file to `.env` and fill in the necessary environment variables.
+
 ### Development
 
 ```bash
