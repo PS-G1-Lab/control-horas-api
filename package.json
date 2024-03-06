@@ -8,7 +8,13 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"dev": "node --watch src/index.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"check": "astro check && tsc --noEmit",
+		"lint": "eslint --ext .ts,.js,.tsx .",
+		"lint:fix": "eslint --ext .ts,.js,.tsx . --fix",
+		"format": "prettier --write src",
+		"format:check": "prettier --check src",
+		"postinstall": "[ -d '.husky' ] && husky install || true"
 	},
 	"author": "PS-G1-Lab",
 	"license": "MIT",
@@ -22,9 +28,13 @@
 		"zod": "3.22.4"
 	},
 	"devDependencies": {
-		"standard": "17.1.0"
-	},
-	"eslintConfig": {
-		"extends": "standard"
+		"@antfu/eslint-config": "0.43.1",
+		"eslint": "8.57.0",
+		"eslint-config-prettier": "9.1.0",
+		"eslint-plugin-astro": "0.31.4",
+		"eslint-plugin-jsx-a11y": "6.8.0",
+		"husky": "^9.0.11",
+		"lightningcss": "1.24.0",
+		"prettier": "3.2.5"
 	}
 }
