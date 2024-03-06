@@ -7,6 +7,5 @@
     "RapidAPI.vscode-rapidapi-client",
     "rapidapi.vscode-services",
     "humao.rest-client"
-  ],
-  "unwantedRecommendations": []
+  ]
 }
