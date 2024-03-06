@@ -6,6 +6,7 @@
     "dotenv.dotenv-vscode",
     "RapidAPI.vscode-rapidapi-client",
     "rapidapi.vscode-services",
-    "humao.rest-client"
+    "humao.rest-client",
+    "esbenp.prettier-vscode"
   ]
 }
