@@ -1,10 +1,10 @@
-import { Router } from 'express'
+import { Router } from "express"
 
-import { UserController } from '../controllers/user.js'
+import { UserController } from "../controllers/user.js"
 
 export const userRouter = Router()
 
-userRouter.get('/init', UserController.init)
+userRouter.get("/init", UserController.init)
 
 // userRouter.post('/signup', UserController.signup)
 // userRouter.post('/login', UserController.login)

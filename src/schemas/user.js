@@ -1,4 +1,4 @@
-import z from 'zod'
+import z from "zod"
 
 const userSchema = z.object({
   userName: z.string().min(3).max(255),
@@ -6,10 +6,10 @@ const userSchema = z.object({
   password: z.string().min(8).max(255).optional()
 })
 
-export function validateUser (input) {
+export function validateUser(input) {
   return userSchema.safeParse(input)
 }
 
-export function validatePartialUser (input) {
+export function validatePartialUser(input) {
   return userSchema.partial().safeParse(input)
 }

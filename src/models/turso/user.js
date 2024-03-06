@@ -1,23 +1,25 @@
-import { randomUUID } from 'node:crypto'
-import { createClient } from '@libsql/client'
-import dotenv from 'dotenv'
+import { randomUUID } from "node:crypto"
 
-dotenv.config({ path: '../../../.env' })
+import { createClient } from "@libsql/client"
+
+import dotenv from "dotenv"
+
+dotenv.config({ path: "../../../.env" })
 
 const db = () => {
-  return createClient({
-    url: process.env.DB_URL,
-    authToken: process.env.DB_AUTH_TOKEN
-  })
+	return createClient({
+		url: process.env.DB_URL,
+		authToken: process.env.DB_AUTH_TOKEN
+	})
 }
 
 export class UserModel {
-  static async init () {
-    // Connect to the database
-    const client = db()
+	static async init() {
+		// Connect to the database
+		const client = db()
 
-    // Create the table users if it doesn't exist
-    await client.execute(`
+		// Create the table users if it doesn't exist
+		await client.execute(`
       CREATE TABLE IF NOT EXISTS users (
         user_id UUID PRIMARY KEY NOT NULL,
         user_name TEXT NOT NULL UNIQUE,
@@ -31,34 +33,34 @@ export class UserModel {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `).catch(err => {
-      return { err }
-    })
+			return { err }
+		})
 
-    // Insert some data
-    const user = await client.execute(`
+		// Insert some data
+		const user = await client.execute(`
       INSERT INTO users (user_id, user_name, email, is_verified, verification_token, password)
       VALUES ('${randomUUID()}', 'jcap', 'jcap@jcap.com', TRUE, '1234', '1234');
     `).catch(err => {
-      return { err }
-    })
+			return { err }
+		})
 
-    return { user }
-  }
+		return { user }
+	}
 
-  static async getUserIdByUserName ({ userName }) {
-    const client = db()
-    const userId = await client.execute(`
+	static async getUserIdByUserName({ userName }) {
+		const client = db()
+		const userId = await client.execute(`
       SELECT user_id FROM users WHERE user_name = '${userName}';
     `).catch(err => {
-      return { err }
-    })
+			return { err }
+		})
 
-    if (userId === undefined) {
-      return { error: 'User not found' }
-    }
+		if (userId === undefined) {
+			return { error: "User not found" }
+		}
 
-    return { userId: userId[0].user_id }
-  }
+		return { userId: userId[0].user_id }
+	}
 }
 
 // export class MovieModel {
