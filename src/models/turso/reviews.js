@@ -9,7 +9,7 @@ dotenv.config({ path: "../../../.env" })
 const db = () => {
 	return createClient({
 		url: process.env.DB_URL,
-		authToken: process.env.DB_AUTH_TOKEN
+		authToken: process.env.DB_AUTH_TOKEN,
 	})
 }
 
@@ -17,7 +17,9 @@ export class ReviewModel {
 	static async init() {
 		const client = db()
 
-		await client.execute(`
+		await client
+			.execute(
+				`
       CREATE TABLE IF NOT EXISTS reviews (
         review_id UUID PRIMARY KEY NOT NULL,
         title TEXT NOT NULL,
@@ -27,15 +29,21 @@ export class ReviewModel {
         FOREIGN KEY (user_id) 
           REFERENCES users (user_id)
       );
-    `).catch(err => {
-			return { step: "create", err }
-		})
+    `
+			)
+			.catch((err) => {
+				return { step: "create", err }
+			})
 
-		const userIdConsult = await client.execute(`
+		const userIdConsult = await client
+			.execute(
+				`
       SELECT user_id FROM users WHERE user_name = 'jcap';
-    `).catch(err => {
-			return { step: "select", err }
-		})
+    `
+			)
+			.catch((err) => {
+				return { step: "select", err }
+			})
 
 		if (userIdConsult.rows.length === 0) return { status: 404, error: "User not found" }
 
@@ -45,7 +53,7 @@ export class ReviewModel {
 			title: "your title here",
 			content: "your content here",
 			rate: 1,
-			userId
+			userId,
 		})
 
 		return { result }
@@ -62,7 +70,7 @@ export class ReviewModel {
 		const client = db()
 		const result = await client.execute({
 			sql: "INSERT INTO reviews VALUES (:reviewId, :title, :content, :rate, :userId)",
-			args: { reviewId: randomUUID(), title, content, rate, userId }
+			args: { reviewId: randomUUID(), title, content, rate, userId },
 		})
 		return result
 	}
