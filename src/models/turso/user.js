@@ -26,7 +26,7 @@ const dataSchema = z
 	.refine((value) => !/^[a-zA-Z0-9]+$/.test(value), {
 		message: "No debe contener patrones de letras y/o números",
 	})
-
+  ////
 export class UserModel {
 	static async init() {
 		// Connect to the database
