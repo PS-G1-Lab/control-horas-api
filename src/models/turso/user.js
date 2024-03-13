@@ -4,8 +4,6 @@ import { createClient } from "@libsql/client"
 
 import dotenv from "dotenv"
 
-import { z } from "zod"
-
 dotenv.config({ path: "../../../.env" })
 
 const db = () => {
@@ -15,18 +13,6 @@ const db = () => {
 	})
 }
 
-// Definir el esquema de validación
-const dataSchema = z
-	.string()
-	.min(8, { message: "Debe tener al menos 8 caracteres" })
-	.regex(/.*\d.*/, { message: "Debe contener al menos un número" })
-	.regex(/.*[!@#$&?*_].*/, { message: "Debe contener al menos un carácter especial" })
-	.regex(/.*[a-z].*/, { message: "Debe contener al menos una letra minúscula" })
-	.regex(/.*[A-Z].*/, { message: "Debe contener al menos una letra mayúscula" })
-	.refine((value) => !/^[a-zA-Z0-9]+$/.test(value), {
-		message: "No debe contener patrones de letras y/o números",
-	})
-  ////
 export class UserModel {
 	static async init() {
 		// Connect to the database
@@ -86,18 +72,6 @@ export class UserModel {
 		}
 
 		return { userId: userId[0].user_id }
-	}
-
-	// Función para validar datos
-	static async validationData(data) {
-		try {
-			// Validar los datos utilizando el esquema
-			dataSchema.parse(data)
-			return true // Los datos son válidos
-		} catch (error) {
-			console.error(error.errors) // Mostrar los errores de validación
-			return false // Los datos no son válidos
-		}
 	}
 
 	// export class MovieModel {
