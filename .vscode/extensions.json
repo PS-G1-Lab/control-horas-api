@@ -1,12 +1,13 @@
 {
-  "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "usernamehw.errorlens",
-    "EditorConfig.EditorConfig",
-    "dotenv.dotenv-vscode",
-    "RapidAPI.vscode-rapidapi-client",
-    "rapidapi.vscode-services",
-    "humao.rest-client",
-    "esbenp.prettier-vscode"
-  ]
+	"recommendations": [
+		"dbaeumer.vscode-eslint",
+		"usernamehw.errorlens",
+		"EditorConfig.EditorConfig",
+		"dotenv.dotenv-vscode",
+		"RapidAPI.vscode-rapidapi-client",
+		"rapidapi.vscode-services",
+		"humao.rest-client",
+		"esbenp.prettier-vscode",
+		"hediet.vscode-drawio"
+	]
 }
