@@ -4,6 +4,7 @@ const ACCEPTED_ORIGINS = [
 	"http://localhost:8080",
 	"http://localhost:1234",
 	"http://localhost:4321",
+	"control-horas-xi.vercel.app",
 	// Add the production URL
 ]
 
