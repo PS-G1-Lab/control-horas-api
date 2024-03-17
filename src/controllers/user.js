@@ -3,8 +3,13 @@ import { validateUser } from "../schemas/user.js"
 
 export class UserController {
 	static async init(req, res) {
-		const init = await UserModel.init()
-		return res.json(init)
+		const result = await UserModel.init()
+
+		if (result.error) {
+			return res.status(500).json({ error: result.error })
+		}
+
+		res.status(result.status).json(result.message)
 	}
 
 	static async signup(req, res) {
@@ -15,6 +20,10 @@ export class UserController {
 		}
 
 		const newUser = await UserModel.signup({ input: result.data })
+
+		if (newUser.error) {
+			return res.status(500).json({ error: newUser.error })
+		}
 
 		res.status(201).json(newUser)
 	}
