@@ -22,10 +22,10 @@ export class UserController {
 		const newUser = await UserModel.signup({ input: result.data })
 
 		if (newUser.error) {
-			return res.status(500).json({ error: newUser.error })
+			return res.status(newUser.status).json({ error: newUser.error })
 		}
 
-		res.status(201).json(newUser)
+		res.status(newUser.status).json(newUser.user)
 	}
 
 	// static async getById (req, res) {

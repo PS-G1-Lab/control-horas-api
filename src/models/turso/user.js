@@ -28,7 +28,7 @@ export class UserModel {
 					email TEXT NOT NULL UNIQUE,
 					password TEXT NOT NULL,
 					is_verified BOOLEAN DEFAULT FALSE,
-					verification_token TEXT UNIQUE NOT NULL,
+					verification_token TEXT UNIQUE DEFAULT NULL,
 					reset_password_token TEXT UNIQUE DEFAULT NULL,
 					reset_password_expires TIMESTAMP DEFAULT NULL,
 					role ENUM(0, 1) DEFAULT 0,
@@ -65,24 +65,25 @@ export class UserModel {
 
 	static async signup({ input }) {
 		const client = db()
+
 		const user = await client
 			.execute(
 				`
 				INSERT INTO users (user_id, user_name, email, password, role)
 				VALUES (
-					'${randomUUID()}', '${input.userName}', '${input.email}', '${input.password}', '${input.role}'
+					'${randomUUID()}', '${input.userName}', '${input.email}', '${input.password}', '${+input.role}'
 				);
 				`
 			)
-			.catch((err) => {
-				return { err }
+			.catch((error) => {
+				return { error }
 			})
 
-		if (user === undefined) {
-			return { error: "User not created" }
+		if (user.error) {
+			return { status: 400, error: "User not created" }
 		}
 
-		return user[0]
+		return { status: 201, user }
 	}
 
 	// export class MovieModel {
