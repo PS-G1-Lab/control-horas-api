@@ -22,3 +22,5 @@ yarn.lock
 # .vs folder
 .vs/
 .idea
+
+.node-version
