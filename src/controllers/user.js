@@ -13,6 +13,8 @@ export class UserController {
 	}
 
 	static async signup(req, res) {
+		// eslint-disable-next-line no-console
+		console.log(req.body)
 		const result = validateUser(req.body)
 
 		if (!result.success) {
