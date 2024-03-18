@@ -6,25 +6,19 @@ import dotenv from "dotenv"
 
 dotenv.config({ path: "../../../.env" })
 
-const db = () => {
-	return createClient({
-		url: process.env.DB_URL,
-		authToken: process.env.DB_AUTH_TOKEN,
-	})
-}
+const db = createClient({
+	url: process.env.DB_URL,
+	authToken: process.env.DB_AUTH_TOKEN,
+})
 
 export class UserModel {
 	static async init() {
-		// Connect to the database
-		const client = db()
-
-		// Create the table users if it doesn't exist
-		await client
+		await db
 			.execute(
 				`
       	CREATE TABLE IF NOT EXISTS users (
 					user_id UUID PRIMARY KEY NOT NULL,
-					user_name TEXT NOT NULL UNIQUE,
+					user_name TEXT NOT NULL,
 					email TEXT NOT NULL UNIQUE,
 					password TEXT NOT NULL,
 					is_verified BOOLEAN DEFAULT FALSE,
@@ -41,49 +35,61 @@ export class UserModel {
 				return { err }
 			})
 
-		return { status: 201, message: "Table created" }
+		return { message: "Table created" }
 	}
 
-	static async getUserIdByUserName({ userName }) {
-		const client = db()
-		const userId = await client
-			.execute(
-				`
-      	SELECT user_id FROM users WHERE user_name = '${userName}';
-    		`
-			)
+	static async getUserIdByUserEmail(email) {
+		const userId = await db
+			.execute({
+				sql: "SELECT user_id FROM users WHERE email = ?",
+				args: [email],
+			})
 			.catch((error) => {
 				return { error }
 			})
 
-		if (userId === undefined) {
-			return { error: "User not found" }
+		if (userId.error) {
+			return { error: "Email no válido" }
 		}
 
-		return { userId: userId[0].user_id }
+		return { userId: userId?.rows[0][0] }
 	}
 
-	static async signup({ input }) {
-		const client = db()
+	static async createUser({ input }) {
+		const { userName, email, password, role } = input
 
-		const user = await client
-			.execute(
-				`
-				INSERT INTO users (user_id, user_name, email, password, role)
-				VALUES (
-					'${randomUUID()}', '${input.userName}', '${input.email}', '${input.password}', '${+input.role}'
-				);
-				`
-			)
+		const user = await db
+			.execute({
+				sql: "INSERT INTO users (user_id, user_name, email, password, role) VALUES (?, ?, ?, ?, ?)",
+				args: [randomUUID(), userName, email, password, +role],
+			})
 			.catch((error) => {
 				return { error }
 			})
 
 		if (user.error) {
-			return { status: 400, error: "User not created" }
+			return { error: "El correo ya existe" }
 		}
 
-		return { status: 201, user }
+		return { message: "User created" }
+	}
+
+	static async checkUserPasswordById({ input }) {
+		const { email, password } = input
+
+		const userName = await db
+			.execute({
+				sql: "SELECT user_name FROM users WHERE email = ? and password = ?",
+				args: [email, password],
+			})
+			.catch((error) => {
+				return { error }
+			})
+
+		if (userName.error) {
+			return { error: "User not found" }
+		}
+		return { userName: userName?.rows[0][0] }
 	}
 
 	// export class MovieModel {

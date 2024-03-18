@@ -9,7 +9,7 @@ export class UserController {
 			return res.status(500).json({ error: result.error })
 		}
 
-		res.status(result.status).json(result.message)
+		res.status(201).json(result.message)
 	}
 
 	static async signup(req, res) {
@@ -19,13 +19,29 @@ export class UserController {
 			return res.status(400).json({ error: JSON.parse(result.error.message) })
 		}
 
-		const newUser = await UserModel.signup({ input: result.data })
+		// TODO encrypt password
+
+		const newUser = await UserModel.createUser({ input: result.data })
 
 		if (newUser.error) {
-			return res.status(newUser.status).json({ error: newUser.error })
+			return res.status(400).json({ error: newUser.error })
 		}
 
-		res.status(newUser.status).json(newUser.user)
+		res.status(201).json(newUser.message)
+	}
+
+	static async login(req, res) {
+		const { email, password } = req.body
+
+		// TODO encrypt password
+
+		const checkUserPassword = await UserModel.checkUserPasswordById({ input: { email, password } })
+
+		if (checkUserPassword.error) {
+			return res.status(400).json({ error: checkUserPassword.error })
+		}
+
+		res.status(200).json({ message: "User logged in" })
 	}
 
 	// static async getById (req, res) {
