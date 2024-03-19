@@ -4,4 +4,4 @@ import { UserController } from "../controllers/user.js"
 
 export const dbRouter = Router()
 
-dbRouter.get("", UserController.init)
+dbRouter.post("/users", UserController.init)
