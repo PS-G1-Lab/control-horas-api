@@ -1,5 +1,5 @@
 import { UserModel } from "../models/turso/user.js"
-import { validateUser } from "../schemas/user.js"
+import { validatePasswordForm, validateUser } from "../schemas/user.js"
 
 export class UserController {
 	static async init(req, res) {
@@ -13,35 +13,53 @@ export class UserController {
 	}
 
 	static async signup(req, res) {
-		const result = validateUser(req.body)
+		const passwordForm = validatePasswordForm(req.body)
 
-		if (!result.success) {
-			return res.status(400).json({ error: JSON.parse(result.error.message) })
+		if (!passwordForm.success) {
+			return res.status(400).json({ error: JSON.parse(passwordForm.error.message) })
 		}
 
-		// TODO encrypt password
+		const userData = validateUser(req.body)
 
-		const newUser = await UserModel.createUser({ input: result.data })
+		if (!userData.success) {
+			return res.status(400).json({ error: JSON.parse(userData.error.message) })
+		}
+
+		const input = { ...userData.data, ...passwordForm.data }
+
+		const newUser = await UserModel.createUser({ input })
 
 		if (newUser.error) {
-			return res.status(400).json({ error: newUser.error })
+			return res.status(newUser.status).json({ error: newUser.error })
 		}
 
-		res.status(201).json(newUser.message)
+		res.status(201).json({ message: newUser.message })
 	}
 
 	static async login(req, res) {
 		const { email, password } = req.body
 
-		// TODO encrypt password
+		const userExists = await UserModel.getUserIdByEmail(email)
 
-		const checkUserPassword = await UserModel.checkUserPasswordById({ input: { email, password } })
-
-		if (checkUserPassword.error) {
-			return res.status(400).json({ error: checkUserPassword.error })
+		if (userExists.error) {
+			return res.status(404).json({ error: userExists.error })
 		}
 
-		res.status(200).json({ message: "User logged in" })
+		const input = { password, userId: userExists.userId }
+
+		const checkPassword = await UserModel.checkPasswordByUserId({ input })
+
+		if (checkPassword.error) {
+			return res.status(checkPassword.status).json({ error: checkPassword.error })
+		}
+
+		const sessionToken = await UserModel.getSessionToken(userExists.userId)
+
+		if (sessionToken.error) {
+			return res.status(500).json({ error: sessionToken.error })
+		}
+
+		res.status(200).json({ sessionToken: sessionToken.sessionToken, message: "User logged in" })
 	}
 
 	// static async getById (req, res) {
