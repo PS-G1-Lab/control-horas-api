@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto"
+import { createHash, randomUUID } from "node:crypto"
 
 import { createClient } from "@libsql/client"
 
@@ -13,11 +13,11 @@ const db = createClient({
 
 export class UserModel {
 	static async init() {
-		await db
+		const createUsersTable = await db
 			.execute(
 				`
-      	CREATE TABLE IF NOT EXISTS users (
-					user_id UUID PRIMARY KEY NOT NULL,
+				CREATE TABLE IF NOT EXISTS users (
+					user_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
 					user_name TEXT NOT NULL,
 					email TEXT NOT NULL UNIQUE,
 					password TEXT NOT NULL,
@@ -27,19 +27,51 @@ export class UserModel {
 					reset_password_expires TIMESTAMP DEFAULT NULL,
 					role ENUM(0, 1) DEFAULT 0,
 					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      	);
-    		` // role 0 = student, role 1 = teacher
+					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					session_token UUID UNIQUE DEFAULT NULL
+				);
+				` // role 0 = student, role 1 = teacher
 			)
-			.catch((err) => {
-				return { err }
+			.catch((error) => {
+				return { error }
 			})
 
-		return { message: "Table created" }
+		if (createUsersTable.error) {
+			return { error: createUsersTable.error }
+		}
+
+		return { message: "Tabla 'users' creada" }
 	}
 
-	static async getUserIdByUserEmail(email) {
-		const userId = await db
+	static async createUser({ input }) {
+		const { userName, email, password, role } = input
+
+		const userExists = await this.getUserIdByEmail(email)
+
+		if (userExists.userId) {
+			return { status: 400, error: "El usuario ya existe" }
+		}
+
+		const encryptedPassword = await this.encryptPassword(password)
+
+		const newUser = await db
+			.execute({
+				sql: "INSERT INTO users (user_name, email, password, role) VALUES (?, ?, ?, ?)",
+				args: [userName, email, encryptedPassword, +role],
+			})
+			.catch((error) => {
+				return { error }
+			})
+
+		if (newUser.error) {
+			return { status: 500, error: "Error al crear el usuario" }
+		}
+
+		return { message: "Usuario creado" }
+	}
+
+	static async getUserIdByEmail(email) {
+		const dbData = await db
 			.execute({
 				sql: "SELECT user_id FROM users WHERE email = ?",
 				args: [email],
@@ -48,48 +80,62 @@ export class UserModel {
 				return { error }
 			})
 
-		if (userId.error) {
-			return { error: "Email no válido" }
+		const userId = dbData?.rows[0]
+
+		if (userId === undefined) {
+			return { error: "Usuario no encontrado" }
 		}
 
-		return { userId: userId?.rows[0][0] }
+		return { userId: userId.user_id }
 	}
 
-	static async createUser({ input }) {
-		const { userName, email, password, role } = input
+	static async checkPasswordByUserId({ input }) {
+		const { userId, password } = input
 
-		const user = await db
+		const encryptedPassword = await this.encryptPassword(password)
+
+		const dbPassword = await db
 			.execute({
-				sql: "INSERT INTO users (user_id, user_name, email, password, role) VALUES (?, ?, ?, ?, ?)",
-				args: [randomUUID(), userName, email, password, +role],
+				sql: "SELECT password FROM users WHERE user_id = ?",
+				args: [userId],
 			})
 			.catch((error) => {
 				return { error }
 			})
 
-		if (user.error) {
-			return { error: "El correo ya existe" }
+		if (dbPassword.error) {
+			return { status: 500, error: "Error al obtener la contraseña" }
 		}
 
-		return { message: "User created" }
+		if (dbPassword.rows[0].password !== encryptedPassword) {
+			return { status: 400, error: "Contraseña incorrecta" }
+		}
+
+		return { message: "Contraseña correcta" }
 	}
 
-	static async checkUserPasswordById({ input }) {
-		const { email, password } = input
+	static async getSessionToken(userId) {
+		const sessionToken = randomUUID()
 
-		const userName = await db
+		const insertSessionToken = await db
 			.execute({
-				sql: "SELECT user_name FROM users WHERE email = ? and password = ?",
-				args: [email, password],
+				sql: "UPDATE users SET session_token = ? WHERE user_id = ?",
+				args: [sessionToken, userId],
 			})
 			.catch((error) => {
 				return { error }
 			})
 
-		if (userName.error) {
-			return { error: "User not found" }
+		if (insertSessionToken.error) {
+			return { error: insertSessionToken.error }
 		}
-		return { userName: userName?.rows[0][0] }
+
+		return { sessionToken }
+	}
+
+	static async encryptPassword(password) {
+		const encryptedPassword = createHash("sha512").update(password).digest("hex")
+		return encryptedPassword
 	}
 
 	// export class MovieModel {
