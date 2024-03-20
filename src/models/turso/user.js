@@ -6,9 +6,13 @@ import dotenv from "dotenv"
 
 dotenv.config({ path: "../../../.env" })
 
+// const db = createClient({
+// 	url: process.env.DB_URL,
+// 	authToken: process.env.DB_AUTH_TOKEN,
+// })
+
 const db = createClient({
-	url: process.env.DB_URL,
-	authToken: process.env.DB_AUTH_TOKEN,
+	url: "http://127.0.0.1:8080",
 })
 
 export class UserModel {
@@ -49,7 +53,7 @@ export class UserModel {
 		const userExists = await this.getUserIdByEmail(email)
 
 		if (userExists.userId) {
-			return { status: 400, error: "El usuario ya existe" }
+			return { status: 409, error: "El usuario ya existe" }
 		}
 
 		const encryptedPassword = await this.encryptPassword(password)
