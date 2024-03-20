@@ -14,7 +14,8 @@
 		"lint:fix": "eslint --ext .ts,.js,.tsx . --fix",
 		"format": "prettier --write src",
 		"format:check": "prettier --check src",
-		"postinstall": "[ -d '.husky' ] && husky install || true"
+		"postinstall": "[ -d '.husky' ] && husky install || true",
+		"db": "turso dev --db-file ./src/models/local-file-system/local-database.db"
 	},
 	"author": "PS-G1-Lab",
 	"license": "MIT",
