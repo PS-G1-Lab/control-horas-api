@@ -25,6 +25,10 @@ export class UserController {
 			return res.status(400).json({ error: JSON.parse(userData.error.message) })
 		}
 
+		if (passwordForm.data.password === userData.data.email) {
+			return res.status(400).json({ error: "La contraseña no puede ser igual al email" })
+		}
+
 		const input = { ...userData.data, ...passwordForm.data }
 
 		const newUser = await UserModel.createUser({ input })
