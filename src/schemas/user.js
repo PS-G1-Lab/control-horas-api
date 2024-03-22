@@ -35,7 +35,7 @@ const passwordForm = z
 			.refine((value) => !/^[a-zA-Z0-9]+$/.test(value), {
 				message: "No deben haber patrones de letras y/o números",
 			}),
-		confirmPassword: z.string(),
+		confirmPassword: z.string().optional(),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Las contraseñas no coinciden",
@@ -52,4 +52,8 @@ export function validatePartialUser(input) {
 
 export function validatePasswordForm(input) {
 	return passwordForm.safeParse(input)
+}
+
+export function validatePartialPasswordForm(input) {
+	return passwordForm.partial().safeParse(input)
 }
