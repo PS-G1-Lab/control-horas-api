@@ -13,7 +13,6 @@ export class UserController {
 	}
 
 	static async signup(req, res) {
-		// 1. Check user data from dataform
 		const userData = validateUser(req.body)
 
 		if (!userData.success) {
@@ -30,14 +29,12 @@ export class UserController {
 			return res.status(400).json({ error: "La contraseña no puede ser igual al email" })
 		}
 
-		// 2. Check if user exist
 		const userExists = await UserModel.getUserIdByEmail(userData.data.email)
 
 		if (userExists.userId) {
 			return res.status(409).json({ error: "El usuario ya existe" })
 		}
 
-		// 3. Pass user data validate it to create funtion
 		const input = { ...userData.data, ...passwordForm.data }
 
 		const newUser = await UserModel.createUser({ input })
