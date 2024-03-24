@@ -50,12 +50,6 @@ export class UserModel {
 	static async createUser({ input }) {
 		const { userName, email, password, role } = input
 
-		const userExists = await this.getUserIdByEmail(email)
-
-		if (userExists.userId) {
-			return { status: 409, error: "El usuario ya existe" }
-		}
-
 		const encryptedPassword = await this.encryptPassword(password)
 
 		const newUser = await db
@@ -68,7 +62,7 @@ export class UserModel {
 			})
 
 		if (newUser.error) {
-			return { status: 500, error: "Error al crear el usuario" }
+			return { error: "Error al crear el usuario" }
 		}
 
 		return { message: "Usuario creado" }
