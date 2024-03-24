@@ -102,7 +102,7 @@ export class UserModel {
 			})
 
 		if (dbPassword.error) {
-			return { status: 500, error: "Error al obtener la contraseña" }
+			return { status: 500, error: "Error de servidor" }
 		}
 
 		if (dbPassword.rows[0].password !== encryptedPassword) {
