@@ -131,6 +131,48 @@ export class UserModel {
 		return { sessionToken }
 	}
 
+	static async getUserNameByUserId({ input }) {
+		const { userId } = input
+
+		const dbData = await db
+			.execute({
+				sql: "SELECT user_name FROM users WHERE user_id = ?",
+				args: [userId],
+			})
+			.catch((error) => {
+				return { error }
+			})
+
+		const userName = dbData?.rows[0]
+
+		if (userName === undefined) {
+			return { error: "Usuario no encontrado" }
+		}
+
+		return { userName: userName.user_name }
+	}
+
+	static async validateUserSession({ input }) {
+		const { sessionToken, userName } = input
+
+		const dbData = await db
+			.execute({
+				sql: "SELECT user_name, email, role, is_verified FROM users WHERE session_token = ? AND user_name = ?",
+				args: [sessionToken, userName],
+			})
+			.catch((error) => {
+				return { error }
+			})
+
+		const userData = dbData?.rows[0]
+
+		if (userData === undefined) {
+			return { error: "Usuario no encontrado" }
+		}
+
+		return { userData }
+	}
+
 	static async encryptPassword(password) {
 		const encryptedPassword = createHash("sha512").update(password).digest("hex")
 		return encryptedPassword
