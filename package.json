@@ -23,7 +23,7 @@
 		"@libsql/client": "0.5.6",
 		"cors": "2.8.5",
 		"dotenv": "16.4.5",
-		"express": "4.19.1",
+		"express": "4.19.2",
 		"morgan": "1.10.0",
 		"resend": "3.2.0",
 		"zod": "3.22.4"
