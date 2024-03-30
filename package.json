@@ -20,7 +20,7 @@
 	"author": "PS-G1-Lab",
 	"license": "MIT",
 	"dependencies": {
-		"@libsql/client": "0.5.6",
+		"@libsql/client": "0.6.0",
 		"cors": "2.8.5",
 		"dotenv": "16.4.5",
 		"express": "4.19.2",
@@ -31,7 +31,6 @@
 	"devDependencies": {
 		"@antfu/eslint-config": "0.43.1",
 		"eslint-config-prettier": "9.1.0",
-		"eslint-plugin-astro": "0.32.0",
 		"eslint-plugin-jsx-a11y": "6.8.0",
 		"eslint": "8.57.0",
 		"husky": "^9.0.11",
