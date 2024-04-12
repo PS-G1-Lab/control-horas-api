@@ -1,5 +1,6 @@
 import { UserModel } from "../models/turso/user.js"
 import { validatePasswordForm, validateUser } from "../schemas/user.js"
+import { sendMailVerification } from "../services/mail/sendMailRegister.js"
 
 export class UserController {
 	static async init(req, res) {
@@ -38,6 +39,12 @@ export class UserController {
 		const input = { ...userData.data, ...passwordForm.data }
 
 		const newUser = await UserModel.createUser({ input })
+
+		const mail = await sendMailVerification({ input })
+
+		if (mail.error) {
+			return res.status(500).json({ error: mail.error })
+		}
 
 		if (newUser.error) {
 			return res.status(500).json({ error: newUser.error })
