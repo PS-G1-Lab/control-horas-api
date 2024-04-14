@@ -4,16 +4,16 @@ import { createClient } from "@libsql/client"
 
 import dotenv from "dotenv"
 
-dotenv.config({ path: "../../../.env" })
-
-// const db = createClient({
-// 	url: process.env.DB_URL,
-// 	authToken: process.env.DB_AUTH_TOKEN,
-// })
+dotenv.config({ path: "./././.env" })
 
 const db = createClient({
-	url: "http://127.0.0.1:8080",
+	url: process.env.DB_URL,
+	authToken: process.env.DB_AUTH_TOKEN,
 })
+
+// const db = createClient({
+// 	url: "http://127.0.0.1:8080",
+// })
 
 export class UserModel {
 	static async init() {
