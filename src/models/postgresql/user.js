@@ -5,7 +5,7 @@ import pgp from "pg-promise"
 
 const db = pgp(process.env.POSTGRES_DB_URL)
 
-dotenv.config({ path: "./././.env" })
+dotenv.config({ path: "../../../.env" })
 
 export class UserModel {
 	static async init() {
