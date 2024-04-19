@@ -3,9 +3,9 @@ import express, { json, urlencoded } from "express"
 import { corsMiddleware } from "./middlewares/cors.js"
 
 import { dbRouter } from "./routes/db.js"
-import { subjectRouter } from "./routes/subject.js"
 import { userRouter } from "./routes/user.js"
 
+// import { subjectRouter } from "./routes/subject.js"
 // import { reviewsRouter } from "./routes/reviews.js"
 
 const app = express()
@@ -16,7 +16,7 @@ app.use(urlencoded({ extended: true }))
 app.use(corsMiddleware())
 app.use("/db", dbRouter)
 app.use("/user", userRouter)
-app.use("/subject", subjectRouter)
+// app.use("/subject", subjectRouter)
 
 // app.use("/reviews", reviewsRouter)
 
