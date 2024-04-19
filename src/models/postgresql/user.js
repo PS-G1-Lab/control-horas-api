@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto"
 
 import dotenv from "dotenv"
-import { Pool } from "pg"
+const { Pool } = require("pg")
 
 dotenv.config({ path: "../../../.env" })
 
