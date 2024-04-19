@@ -3,7 +3,13 @@ import { createHash, randomUUID } from "node:crypto"
 import dotenv from "dotenv"
 import pgp from "pg-promise"
 
-const db = pgp(process.env.POSTGRES_DB_URL)
+const db = pgp({
+	user: process.env.RENDER_DB_USER,
+	password: process.env.RENDER_DB_PASSWORD,
+	host: process.env.RENDER_DB_HOST,
+	port: process.env.RENDER_DB_PORT,
+	database: process.env.RENDER_DB,
+})
 
 dotenv.config({ path: "../../../.env" })
 
