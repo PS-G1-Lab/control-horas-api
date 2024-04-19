@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto"
 
 import dotenv from "dotenv"
-import pgp from "pg-promise"
+import { pgp } from "pg"
 
 dotenv.config({ path: "../../../.env" })
 
