@@ -3,6 +3,8 @@ import { createHash, randomUUID } from "node:crypto"
 import dotenv from "dotenv"
 import pgp from "pg-promise"
 
+dotenv.config({ path: "../../../.env" })
+
 const db = pgp({
 	user: process.env.RENDER_DB_USER,
 	password: process.env.RENDER_DB_PASSWORD,
@@ -10,8 +12,6 @@ const db = pgp({
 	port: process.env.RENDER_DB_PORT,
 	database: process.env.RENDER_DB,
 })
-
-dotenv.config({ path: "../../../.env" })
 
 export class UserModel {
 	static async init() {
