@@ -1,11 +1,11 @@
 import { createHash, randomUUID } from "node:crypto"
 
 import dotenv from "dotenv"
-import { pgp } from "pg"
+import { Pool } from "pg"
 
 dotenv.config({ path: "../../../.env" })
 
-const db = pgp({
+const db = Pool({
 	user: process.env.RENDER_DB_USER,
 	password: process.env.RENDER_DB_PASSWORD,
 	host: process.env.RENDER_DB_HOST,
