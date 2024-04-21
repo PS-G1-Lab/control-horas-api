@@ -1,4 +1,5 @@
 import { SubjectModel } from "../models/turso/subject.js"
+
 import { validateSubject } from "../schemas/subject.js"
 
 export class SubjectController {
@@ -33,5 +34,21 @@ export class SubjectController {
 		}
 
 		return res.status(201).json(subject)
+	}
+
+	static async getSubjectIdByName(req, res) {
+		const subjectName = req.params.name
+
+		const subject = await SubjectModel.getSubjectIdByName(subjectName)
+
+		if (subject.error) {
+			return res.status(500).json({ error: subject.error })
+		}
+
+		if (!subject.data) {
+			return res.status(404).json({ error: "Subject not found" })
+		}
+
+		return res.status(200).json(subject)
 	}
 }

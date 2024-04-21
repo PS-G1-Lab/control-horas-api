@@ -4,13 +4,9 @@ import dotenv from "dotenv"
 
 dotenv.config({ path: "./././.env" })
 
-// const db = createClient({
-// 	url: process.env.DB_URL,
-// 	authToken: process.env.DB_AUTH_TOKEN,
-// })
-
 const db = createClient({
-	url: "http://127.0.0.1:8080",
+	url: process.env.DB_URL,
+	authToken: process.env.DB_AUTH_TOKEN,
 })
 
 export class SubjectModel {
@@ -49,7 +45,6 @@ export class SubjectModel {
 			return { error: newSubject.error }
 		}
 
-		// return { message: "Materia creada" }
-		return { message: "Materia creada" }
+		return { message: "Materia creada", subject: subjectName }
 	}
 }
