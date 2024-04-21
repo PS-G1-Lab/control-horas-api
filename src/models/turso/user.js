@@ -153,24 +153,22 @@ export class UserModel {
 	}
 
 	static async validateUserSession({ input }) {
-		const { sessionToken, userName } = input
+		const { sessionToken, userId } = input
 
 		const dbData = await db
 			.execute({
-				sql: "SELECT user_name, email, role, is_verified FROM users WHERE session_token = ? AND user_name = ?",
-				args: [sessionToken, userName],
+				sql: "SELECT user_id FROM users WHERE session_token = ? AND user_id = ?",
+				args: [sessionToken, userId],
 			})
 			.catch((error) => {
 				return { error }
 			})
 
-		const userData = dbData?.rows[0]
-
-		if (userData === undefined) {
-			return { error: "Usuario no encontrado" }
+		if (dbData.error) {
+			return { error: "Error de servidor" }
 		}
 
-		return { userData }
+		return { message: "Sesión válida" }
 	}
 
 	static async encryptPassword(password) {

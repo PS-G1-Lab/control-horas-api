@@ -73,12 +73,6 @@ export class UserController {
 			return res.status(checkPassword.status).json({ error: checkPassword.error })
 		}
 
-		const userName = await UserModel.getUserNameByUserId({ input })
-
-		if (userName.error) {
-			return res.status(404).json({ error: userName.error })
-		}
-
 		const sessionToken = await UserModel.getSessionToken(userExists.userId)
 
 		if (sessionToken.error) {
@@ -87,7 +81,7 @@ export class UserController {
 
 		res.status(200).json({
 			sessionToken: sessionToken.sessionToken,
-			userName: userName.userName,
+			userId: userExists.userId,
 			message: "User logged in",
 		})
 	}
@@ -110,48 +104,19 @@ export class UserController {
 		return res.status(200).json(userSession)
 	}
 
-	// static async getById (req, res) {
-	//   const { id } = req.params
-	//   const review = await ReviewModel.getById({ id })
-	//   if (review) return res.json(review)
-	//   res.status(404).json({ message: 'Review not found' })
-	// }
+	static async checkSession(req, res) {
+		const { sessionToken, userId } = req.body
 
-	// static async create (req, res) {
-	//   const result = validateReview(req.body)
+		const input = { sessionToken, userId }
 
-	//   if (!result.success) {
-	//     return res.status(400).json({ error: JSON.parse(result.error.message) })
-	//   }
+		console.log(input)
 
-	//   const newReview = await ReviewModel.create({ input: result.data })
+		const userSession = await UserModel.validateUserSession({ input })
 
-	//   res.status(201).json(newReview)
-	// }
+		if (userSession.error) {
+			return res.status(403).json({ error: userSession.error })
+		}
 
-	// static async delete (req, res) {
-	//   const { id } = req.params
-
-	//   const result = await MovieModel.delete({ id })
-
-	//   if (result === false) {
-	//     return res.status(404).json({ message: 'Movie not found' })
-	//   }
-
-	//   return res.json({ message: 'Movie deleted' })
-	// }
-
-	// static async update (req, res) {
-	//   const result = validatePartialMovie(req.body)
-
-	//   if (!result.success) {
-	//     return res.status(400).json({ error: JSON.parse(result.error.message) })
-	//   }
-
-	//   const { id } = req.params
-
-	//   const updatedMovie = await MovieModel.update({ id, input: result.data })
-
-	//   return res.json(updatedMovie)
-	// }
+		return res.status(200).json(userSession)
+	}
 }
