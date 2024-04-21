@@ -9,7 +9,6 @@
 		"start": "node src/index.js",
 		"dev": "node --watch src/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"check": "astro check && tsc --noEmit",
 		"lint": "eslint --ext .ts,.js,.tsx .",
 		"lint:fix": "eslint --ext .ts,.js,.tsx . --fix",
 		"format": "prettier --write src",
