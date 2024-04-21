@@ -16,11 +16,14 @@ export class ClassController {
 	static async createClass(req, res) {
 		const classData = validateClass(req.body)
 
-		if (!classData.success) {
+		if (!classData.success)
 			return res.status(400).json({ error: JSON.parse(classData.error.message) })
-		}
 
 		const newClass = await ClassModel.createClass(classData.data)
+
+		if (newClass.error) {
+			return res.status(500).json({ error: newClass.error })
+		}
 
 		return res.status(201).json(newClass)
 	}

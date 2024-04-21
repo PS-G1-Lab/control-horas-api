@@ -19,12 +19,11 @@ export class ClassModel {
 					user_id INTEGER NOT NULL,
 					title TEXT NOT NULL,
 					subject TEXT NOT NULL,
-					students TEXT DEFAULT NULL,
+					students TEXT DEFAULT "",
 					start_at TIMESTAMP NOT NULL,
 					end TIMESTAMP NOT NULL,
 					date DATE NOT NULL,
 					description TEXT DEFAULT NULL,
-					price DECIMAL(1, 2) NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(user_id)
 				);
 				`
@@ -41,7 +40,7 @@ export class ClassModel {
 	}
 
 	static async createClass(classData) {
-		const { user_id, title, subject, start_at, end, date, description, price } = classData
+		const { userId, title, subject, startAt, end, date, description } = classData
 
 		const subjectName = subject
 			.toUpperCase()
@@ -50,21 +49,24 @@ export class ClassModel {
 			.replace(/[\u0300-\u036F]/g, "")
 
 		const createClass = await db
-			.execute(
-				`
-				INSERT INTO classes (user_id, title, subject, start_at, end, date, description, price)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			.execute({
+				sql: `
+				INSERT INTO classes (
+					user_id, title, subject, start_at, end, date, description
+				)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
 				`,
-				[user_id, title, subjectName, start_at, end, date, description, price]
-			)
+				args: [userId, title, subjectName, startAt, end, date, description],
+			})
 			.catch((error) => {
 				return { error }
 			})
 
 		if (createClass.error) {
+			console.log(createClass)
 			return { error: createClass.error }
 		}
 
-		return { message: createClass }
+		return { message: "Clase creada" }
 	}
 }
