@@ -16,8 +16,8 @@ app.use(urlencoded({ extended: true }))
 app.use(corsMiddleware())
 app.use("/db", dbRouter)
 app.use("/user", userRouter)
-// app.use("/subject", subjectRouter)
 
+// app.use("/subject", subjectRouter)
 // app.use("/reviews", reviewsRouter)
 
 const PORT = process.env.PORT ?? 1234

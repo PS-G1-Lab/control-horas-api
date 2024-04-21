@@ -1,9 +1,11 @@
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import dotenv from "dotenv"
+
 import nodemailer from "nodemailer"
 
-dotenv.config({ path: "./services/.env" })
+import dotenv from "dotenv"
+
+dotenv.config({ path: "././././.env" })
 
 export const transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",

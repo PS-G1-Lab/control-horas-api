@@ -1,7 +1,8 @@
 import { Router } from "express"
 
-// import { SubjectController } from "../controllers/subject.js
 import { UserController } from "../controllers/user.js"
+
+// import { SubjectController } from "../controllers/subject.js
 
 export const dbRouter = Router()
 
