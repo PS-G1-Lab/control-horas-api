@@ -1,5 +1,6 @@
-// import { UserModel } from "../models/turso/user.js"
-import { UserModel } from "../models/postgresql/user.js"
+import { UserModel } from "../models/turso/user.js"
+
+// import { UserModel } from "../models/postgresql/user.js"
 import { validatePasswordForm, validateUser } from "../schemas/user.js"
 import { sendMailVerification } from "../services/mail/sendMailRegister.js"
 
