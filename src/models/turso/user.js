@@ -4,7 +4,7 @@ import { createClient } from "@libsql/client"
 
 import dotenv from "dotenv"
 
-dotenv.config({ path: "../../../.env" })
+dotenv.config({ path: "./././.env" })
 
 const db = createClient({
 	url: process.env.DB_URL,
