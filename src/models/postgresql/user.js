@@ -81,8 +81,10 @@ export class UserModel {
 	}
 
 	static async getUserIdByEmail(email) {
-		const dbData = await db
-			.oneOrNone(
+		await client.connect()
+
+		const dbData = await client
+			.query(
 				`
 				SELECT user_id FROM users WHERE email = $1
 				`,
@@ -91,6 +93,8 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		await client.end()
 
 		const userId = dbData?.user_id
 
@@ -106,8 +110,10 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
-		const dbPassword = await db
-			.oneOrNone(
+		await client.connect()
+
+		const dbPassword = await client
+			.query(
 				`
 				SELECT password FROM users WHERE user_id = $1
 				`,
@@ -116,6 +122,8 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		await client.end()
 
 		if (dbPassword.error) {
 			return { status: 500, error: "Error de servidor" }
@@ -131,8 +139,10 @@ export class UserModel {
 	static async getSessionToken(userId) {
 		const sessionToken = randomUUID()
 
-		const insertSessionToken = await db
-			.none(
+		await client.connect()
+
+		const insertSessionToken = await client
+			.query(
 				`
 				UPDATE users SET session_token = $1 WHERE user_id = $2
 				`,
@@ -141,6 +151,8 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		await client.end()
 
 		if (insertSessionToken.error) {
 			return { error: insertSessionToken.error }
@@ -152,8 +164,10 @@ export class UserModel {
 	static async getUserNameByUserId({ input }) {
 		const { userId } = input
 
-		const dbData = await db
-			.oneOrNone(
+		await client.connect()
+
+		const dbData = await client
+			.query(
 				`
 				SELECT user_name FROM users WHERE user_id = $1
 				`,
@@ -162,6 +176,8 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		await client.end()
 
 		const userName = dbData?.user_name
 
@@ -175,8 +191,10 @@ export class UserModel {
 	static async validateUserSession({ input }) {
 		const { sessionToken, userName } = input
 
-		const dbData = await db
-			.oneOrNone(
+		await client.connect()
+
+		const dbData = await client
+			.query(
 				`
 				SELECT user_name, email, role, is_verified FROM users WHERE session_token = $1 AND user_name = $2
 				`,
@@ -185,6 +203,8 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		await client.end()
 
 		const userData = dbData
 
