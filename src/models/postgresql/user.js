@@ -19,8 +19,9 @@ export class UserModel {
 	static async init() {
 		await client.connect()
 
-		const createUsersTable = await client.query(
-			`
+		const createUsersTable = await client
+			.query(
+				`
 				CREATE TABLE IF NOT EXISTS users (
 					user_id SERIAL PRIMARY KEY,
 					user_name TEXT NOT NULL,
@@ -35,10 +36,11 @@ export class UserModel {
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					session_token UUID UNIQUE DEFAULT NULL
 				);		
-			`
-		)
-
-		console.log(createUsersTable)
+				`
+			)
+			.catch((error) => {
+				return { error }
+			})
 
 		await client.end()
 
@@ -54,10 +56,10 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
-		// const result = await client.query("SELECT $1::text as name", ["brianc"])
+		await client.connect()
 
-		const newUser = await db
-			.none(
+		const newUser = await client
+			.query(
 				`
 				INSERT INTO users (user_name, email, password, role)
 				VALUES ($1, $2, $3, $4)
@@ -68,11 +70,14 @@ export class UserModel {
 				return { error }
 			})
 
+		await client.end()
+
 		if (newUser.error) {
 			return { error: "Error al crear el usuario" }
 		}
 
-		return { message: "Usuario creado" }
+		return { newUser }
+		//return { message: "Usuario creado" }
 	}
 
 	static async getUserIdByEmail(email) {
