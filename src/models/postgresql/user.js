@@ -12,16 +12,7 @@ const client = new Client({
 	user: process.env.DB_USER,
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE,
-	readonly: process.env.DB_READONLY,
-	tls: {
-		mode: process.env.DB_TLS_MODE,
-		config: {
-			cert: null,
-			key: null,
-			ca: null,
-		},
-	},
-	proxy: null,
+	connectionString: process.env.DB_CONNECTION_STRING,
 })
 
 export class UserModel {
