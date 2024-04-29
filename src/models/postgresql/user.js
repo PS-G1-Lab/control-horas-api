@@ -60,7 +60,7 @@ export class UserModel {
 			.query(
 				`
 				INSERT INTO users (user_name, email, password, role)
-				VALUES ($1, $2, $3, $4)
+				VALUES ($1, $2, $3, $4);
 				`,
 				[userName, email, encryptedPassword, +role]
 			)
@@ -70,9 +70,9 @@ export class UserModel {
 
 		await client.end()
 
-		if (newUser.error) {
-			return { error: "Error al crear el usuario" }
-		}
+		// if (newUser.error) {
+		// 	return { error: "Error al crear el usuario" }
+		// }
 
 		return { newUser }
 		//return { message: "Usuario creado" }
