@@ -1,23 +1,25 @@
-import { createHash, randomUUID } from "node:crypto"
-
 import dotenv from "dotenv"
-const { Pool } = require("pg")
+import { createHash, randomUUID } from "node:crypto"
+import pg from "pg"
 
-dotenv.config({ path: "../../../.env" })
+dotenv.config({ path: "./././.env" })
 
-const db = Pool({
-	user: process.env.RENDER_DB_USER,
-	password: process.env.RENDER_DB_PASSWORD,
-	host: process.env.RENDER_DB_HOST,
-	port: process.env.RENDER_DB_PORT,
+const { Client } = pg
+
+const client = new Client({
 	database: process.env.RENDER_DB,
+	host: process.env.RENDER_DB_HOST,
+	password: process.env.RENDER_DB_PASSWORD,
+	port: process.env.RENDER_DB_PORT,
+	user: process.env.RENDER_DB_USER,
 })
 
 export class UserModel {
 	static async init() {
-		const createUsersTable = await db
-			.none(
-				`
+		await client.connect()
+
+		const createUsersTable = await client.query(
+			`
 				CREATE TABLE IF NOT EXISTS users (
 					user_id SERIAL PRIMARY KEY,
 					user_name TEXT NOT NULL,
@@ -32,11 +34,12 @@ export class UserModel {
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					session_token UUID UNIQUE DEFAULT NULL
 				);
-				`
-			)
-			.catch((error) => {
-				return { error }
-			})
+			`
+		)
+
+		console.log(createUsersTable)
+
+		await client.end()
 
 		if (createUsersTable.error) {
 			return { error: createUsersTable.error }
@@ -49,6 +52,8 @@ export class UserModel {
 		const { userName, email, password, role } = input
 
 		const encryptedPassword = await this.encryptPassword(password)
+
+		// const result = await client.query("SELECT $1::text as name", ["brianc"])
 
 		const newUser = await db
 			.none(
