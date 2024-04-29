@@ -7,11 +7,21 @@ dotenv.config({ path: "./././.env" })
 const { Client } = pg
 
 const client = new Client({
-	database: process.env.RENDER_DB,
-	host: process.env.RENDER_DB_HOST,
-	password: process.env.RENDER_DB_PASSWORD,
-	port: process.env.RENDER_DB_PORT,
-	user: process.env.RENDER_DB_USER,
+	host: process.env.DB_HOST,
+	port: process.env.DB_PORT,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_DATABASE,
+	readonly: process.env.DB_READONLY,
+	tls: {
+		mode: process.env.DB_TLS_MODE,
+		config: {
+			cert: null,
+			key: null,
+			ca: null,
+		},
+	},
+	proxy: null,
 })
 
 export class UserModel {
@@ -33,7 +43,7 @@ export class UserModel {
 					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					session_token UUID UNIQUE DEFAULT NULL
-				);
+				);		
 			`
 		)
 
