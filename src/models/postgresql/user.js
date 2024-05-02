@@ -194,5 +194,3 @@ export class UserModel {
 		return encryptedPassword
 	}
 }
-
-await client.end()
