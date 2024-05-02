@@ -56,6 +56,8 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
+		await client.connect()
+
 		const newUser = await client
 			.query(
 				`
