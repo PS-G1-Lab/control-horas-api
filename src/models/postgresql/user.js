@@ -16,6 +16,7 @@ const client = new Client({
 })
 
 await client.connect()
+// await client.end()
 
 export class UserModel {
 	static async init() {
@@ -42,8 +43,6 @@ export class UserModel {
 				return { error }
 			})
 
-		await client.end()
-
 		if (createUsersTable.error) {
 			return { error: createUsersTable.error }
 		}
@@ -68,8 +67,6 @@ export class UserModel {
 				return { error }
 			})
 
-		await client.end()
-
 		// if (newUser.error) {
 		// 	return { error: "Error al crear el usuario" }
 		// }
@@ -89,8 +86,6 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
-
-		await client.end()
 
 		const userId = dbData?.user_id
 
@@ -117,8 +112,6 @@ export class UserModel {
 				return { error }
 			})
 
-		await client.end()
-
 		if (dbPassword.error) {
 			return { status: 500, error: "Error de servidor" }
 		}
@@ -144,8 +137,6 @@ export class UserModel {
 				return { error }
 			})
 
-		await client.end()
-
 		if (insertSessionToken.error) {
 			return { error: insertSessionToken.error }
 		}
@@ -166,8 +157,6 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
-
-		await client.end()
 
 		const userName = dbData?.user_name
 
@@ -191,8 +180,6 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
-
-		await client.end()
 
 		const userData = dbData
 
