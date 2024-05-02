@@ -15,9 +15,10 @@ const client = new Client({
 	connectionString: process.env.DB_CONNECTION_STRING,
 })
 
+await client.connect()
+
 export class UserModel {
 	static async init() {
-		await client.connect()
 		const createUsersTable = await client
 			.query(
 				`
@@ -55,8 +56,6 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
-		await client.connect()
-
 		const newUser = await client
 			.query(
 				`
@@ -80,7 +79,6 @@ export class UserModel {
 	}
 
 	static async getUserIdByEmail(email) {
-		await client.connect()
 		const dbData = await client
 			.query(
 				`
@@ -107,8 +105,6 @@ export class UserModel {
 		const { userId, password } = input
 
 		const encryptedPassword = await this.encryptPassword(password)
-
-		await client.connect()
 
 		const dbPassword = await client
 			.query(
@@ -137,8 +133,6 @@ export class UserModel {
 	static async getSessionToken(userId) {
 		const sessionToken = randomUUID()
 
-		await client.connect()
-
 		const insertSessionToken = await client
 			.query(
 				`
@@ -161,8 +155,6 @@ export class UserModel {
 
 	static async getUserNameByUserId({ input }) {
 		const { userId } = input
-
-		await client.connect()
 
 		const dbData = await client
 			.query(
@@ -188,8 +180,6 @@ export class UserModel {
 
 	static async validateUserSession({ input }) {
 		const { sessionToken, userName } = input
-
-		await client.connect()
 
 		const dbData = await client
 			.query(
