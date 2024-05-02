@@ -16,7 +16,6 @@ const client = new Client({
 })
 
 await client.connect()
-// await client.end()
 
 export class UserModel {
 	static async init() {
@@ -195,3 +194,5 @@ export class UserModel {
 		return encryptedPassword
 	}
 }
+
+await client.end()
