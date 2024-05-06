@@ -66,12 +66,9 @@ export class UserModel {
 				return { error }
 			})
 
-		// if (newUser.error) {
-		// 	return { error: "Error al crear el usuario" }
-		// }
+		// TODO comprobar si el usuario se ha creado correctamente
 
 		return { newUser }
-		//return { message: "Usuario creado" }
 	}
 
 	static async getUserIdByEmail(email) {
