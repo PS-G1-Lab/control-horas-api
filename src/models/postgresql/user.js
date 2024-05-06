@@ -42,6 +42,10 @@ export class UserModel {
 				return { error }
 			})
 
+		if (createUsersTable.error) {
+			return { error: "Error al crear tabla 'users'" }
+		}
+
 		return { message: "Tabla 'users' creada" }
 	}
 
@@ -61,6 +65,10 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		if (newUser.error) {
+			return { error: "Error al crear usuario" }
+		}
 
 		const userId = await this.getUserIdByEmail(email)
 
@@ -82,6 +90,10 @@ export class UserModel {
 			.catch((error) => {
 				return { error }
 			})
+
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
 
 		const userId = dbData.rows[0]
 
@@ -112,7 +124,7 @@ export class UserModel {
 			return { status: 500, error: "Error de servidor" }
 		}
 
-		if (dbPassword?.password !== encryptedPassword) {
+		if (dbPassword.rows[0] !== encryptedPassword) {
 			return { status: 400, error: "Contraseña incorrecta" }
 		}
 
@@ -140,6 +152,27 @@ export class UserModel {
 		return { sessionToken }
 	}
 
+	static async deleteUserSession({ input }) {
+		const { sessionToken, userId } = input
+
+		const deleteSessionToken = await client
+			.query(
+				`
+				UPDATE users SET session_token = NULL WHERE session_token = $1 AND user_id = $2
+				`,
+				[sessionToken, userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (deleteSessionToken.error) {
+			return { error: "Error al cerrar sesión" }
+		}
+
+		return { message: "Sesión cerrada" }
+	}
+
 	static async getUserNameByUserId({ input }) {
 		const { userId } = input
 
@@ -154,7 +187,11 @@ export class UserModel {
 				return { error }
 			})
 
-		const userName = dbData?.user_name
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userName = dbData.rows[0]
 
 		if (userName === undefined) {
 			return { error: "Usuario no encontrado" }
@@ -177,7 +214,11 @@ export class UserModel {
 				return { error }
 			})
 
-		const userData = dbData
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userData = dbData.rows[0]
 
 		if (userData === undefined) {
 			return { error: "Usuario no encontrado" }
@@ -189,5 +230,30 @@ export class UserModel {
 	static async encryptPassword(password) {
 		const encryptedPassword = createHash("sha512").update(password).digest("hex")
 		return encryptedPassword
+	}
+
+	static async getUserData(userName) {
+		const dbData = await client
+			.query(
+				`
+				SELECT user_name, email, role, is_verified FROM users WHERE user_name = $1
+				`,
+				[userName]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userData = dbData.rows[0]
+
+		if (userData === undefined) {
+			return { error: "Usuario no encontrado" }
+		}
+
+		return { userData }
 	}
 }

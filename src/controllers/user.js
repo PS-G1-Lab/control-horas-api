@@ -40,14 +40,14 @@ export class UserController {
 
 		const newUser = await UserModel.createUser({ input })
 
+		if (newUser.error) {
+			return res.status(500).json({ error: newUser.error })
+		}
+
 		const mail = await sendMailVerification({ input })
 
 		if (mail.error) {
 			return res.status(500).json({ error: mail.error })
-		}
-
-		if (newUser.error) {
-			return res.status(500).json({ error: newUser.error })
 		}
 
 		res.status(201).json({ message: newUser.message })
@@ -83,14 +83,10 @@ export class UserController {
 		})
 	}
 
-	static async data(req, res) {
-		const { sessionToken, userName } = req.body
+	static async checkSession(req, res) {
+		const { sessionToken, userId } = req.body
 
-		if (sessionToken === undefined || userName === undefined) {
-			return res.status(401).json({ error: "No tiene sesión activa" })
-		}
-
-		const input = { sessionToken, userName }
+		const input = { sessionToken, userId }
 
 		const userSession = await UserModel.validateUserSession({ input })
 
@@ -101,19 +97,29 @@ export class UserController {
 		return res.status(200).json(userSession)
 	}
 
-	static async checkSession(req, res) {
+	static async logout(req, res) {
 		const { sessionToken, userId } = req.body
 
 		const input = { sessionToken, userId }
 
-		console.log(input)
-
-		const userSession = await UserModel.validateUserSession({ input })
+		const userSession = await UserModel.deleteUserSession({ input })
 
 		if (userSession.error) {
 			return res.status(403).json({ error: userSession.error })
 		}
 
 		return res.status(200).json(userSession)
+	}
+
+	static async userData(req, res) {
+		const { userName } = req.params
+
+		const userData = await UserModel.getUserData(userName)
+
+		if (userData.error) {
+			return res.status(404).json({ error: userData.error })
+		}
+
+		return res.status(200).json(userData)
 	}
 }
