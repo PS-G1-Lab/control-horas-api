@@ -62,10 +62,7 @@ export class UserModel {
 				return { error }
 			})
 
-		// TODO comprobar si el usuario se ha creado correctamente
-		console.log(this.getUserIdByEmail(email))
-
-		return { newUser }
+		return { newUser: await this.getUserIdByEmail(email) }
 	}
 
 	static async getUserIdByEmail(email) {
