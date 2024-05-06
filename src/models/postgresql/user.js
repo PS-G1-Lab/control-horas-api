@@ -62,7 +62,9 @@ export class UserModel {
 				return { error }
 			})
 
-		return { newUser: await this.getUserIdByEmail(email) }
+		console.log(await this.getUserIdByEmail(email))
+
+		return { message: "Usuario creado" }
 	}
 
 	static async getUserIdByEmail(email) {
