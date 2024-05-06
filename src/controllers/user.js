@@ -72,9 +72,9 @@ export class UserController {
 
 		const sessionToken = await UserModel.getSessionToken(userExists.userId)
 
-		if (sessionToken.error) {
-			return res.status(500).json({ error: sessionToken.error })
-		}
+		// if (sessionToken.error) {
+		// 	return res.status(500).json({ error: sessionToken.error })
+		// }
 
 		res.status(200).json({
 			sessionToken: sessionToken.sessionToken,
