@@ -42,10 +42,6 @@ export class UserModel {
 				return { error }
 			})
 
-		if (createUsersTable.error) {
-			return { error: createUsersTable.error }
-		}
-
 		return { message: "Tabla 'users' creada" }
 	}
 
@@ -67,6 +63,7 @@ export class UserModel {
 			})
 
 		// TODO comprobar si el usuario se ha creado correctamente
+		console.log(this.getUserIdByEmail(email))
 
 		return { newUser }
 	}
