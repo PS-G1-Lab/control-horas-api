@@ -79,7 +79,7 @@ export class UserModel {
 				return { error }
 			})
 
-		const userId = dbData?.user_id
+		const userId = dbData.rows[0]
 
 		if (userId === undefined) {
 			return { error: "Usuario no encontrado" }
