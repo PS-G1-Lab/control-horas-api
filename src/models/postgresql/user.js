@@ -62,7 +62,11 @@ export class UserModel {
 				return { error }
 			})
 
-		console.log(await this.getUserIdByEmail(email))
+		const userId = await this.getUserIdByEmail(email)
+
+		if (userId.error) {
+			return { error: "Error al crear usuario" }
+		}
 
 		return { message: "Usuario creado" }
 	}
