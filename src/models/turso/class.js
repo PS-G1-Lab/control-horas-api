@@ -19,10 +19,10 @@ export class ClassModel {
 					user_id INTEGER NOT NULL,
 					title TEXT NOT NULL,
 					subject TEXT NOT NULL,
-					students TEXT DEFAULT "",
-					start_at TIMESTAMP NOT NULL,
-					end TIMESTAMP NOT NULL,
-					date DATE NOT NULL,
+					students INTEGER DEFAULT 0,
+					start_at TEST NOT NULL,
+					end TEST NOT NULL,
+					date TEST NOT NULL,
 					description TEXT DEFAULT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(user_id)
 				);

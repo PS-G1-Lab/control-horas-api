@@ -18,10 +18,10 @@ const classSchema = z.object({
 		.max(100, {
 			message: "Nombre demasiado largo (máximo 100 caracteres)",
 		}),
-	students: z.string().optional(),
-	startAt: z.number().int().positive(),
-	end: z.number().int().positive(),
-	date: z.number(),
+	students: z.number().int().positive().optional(),
+	startAt: z.string(),
+	end: z.string(),
+	date: z.string(),
 	description: z.string(),
 })
 
