@@ -218,13 +218,13 @@ export class UserModel {
 			return { error: "Error al buscar usuario" }
 		}
 
-		const userData = dbData.rows[0].userData
+		const userData = dbData.rows[0]
 
 		if (userData === undefined) {
 			return { error: "Usuario no encontrado" }
 		}
 
-		return { userData }
+		return { userData: userData.userData }
 	}
 
 	static async encryptPassword(password) {
