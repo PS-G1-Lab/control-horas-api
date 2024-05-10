@@ -66,7 +66,7 @@ export class UserController {
 			return res.status(404).json({ error: userExists.error })
 		}
 
-		const input = { password, userId: userExists }
+		const input = { password, userId: userExists.userId.userId }
 
 		return res.status(200).json({ input })
 
