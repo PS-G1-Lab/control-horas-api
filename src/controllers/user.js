@@ -71,11 +71,10 @@ export class UserController {
 		const checkPassword = await UserModel.checkPasswordByUserId({ input })
 
 		if (checkPassword.error) {
-			return res
-				.status(checkPassword.status)
-				.json({ error: checkPassword.error, error2: checkPassword.error2 })
+			return res.status(checkPassword.status).json({ error: checkPassword.error })
 		}
 
+		//funciona hasta aquí
 		const sessionToken = await UserModel.getSessionToken(userExists.userId)
 
 		if (sessionToken.error) {
