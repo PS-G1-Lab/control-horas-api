@@ -66,9 +66,9 @@ export class UserController {
 			return res.status(404).json({ error: userExists.error })
 		}
 
-		return res.status(200).json(userExists)
-
 		const input = { password, userId: userExists.userId }
+
+		return res.status(200).json({ input })
 
 		const checkPassword = await UserModel.checkPasswordByUserId({ input })
 
