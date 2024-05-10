@@ -95,7 +95,7 @@ export class UserController {
 		const userSession = await UserModel.validateUserSession({ input })
 
 		if (userSession.error) {
-			return res.status(403).json({ error: userSession.error })
+			return res.status(400).json({ error: userSession.error })
 		}
 
 		return res.status(200).json(userSession)

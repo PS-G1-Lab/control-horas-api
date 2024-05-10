@@ -201,14 +201,14 @@ export class UserModel {
 	}
 
 	static async validateUserSession({ input }) {
-		const { sessionToken, userName } = input
+		const { sessionToken, userId } = input
 
 		const dbData = await client
 			.query(
 				`
-				SELECT user_name, email, role, is_verified FROM users WHERE session_token = $1 AND user_name = $2
+				SELECT user_name, email, role, is_verified FROM users WHERE session_token = $1 AND user_id = $2
 				`,
-				[sessionToken, userName]
+				[sessionToken, userId]
 			)
 			.catch((error) => {
 				return { error }
