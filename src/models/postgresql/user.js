@@ -218,7 +218,7 @@ export class UserModel {
 			return { error: "Error al buscar usuario" }
 		}
 
-		const userData = dbData.rows[0]
+		const userData = dbData.rows[0].userData
 
 		if (userData === undefined) {
 			return { error: "Usuario no encontrado" }
