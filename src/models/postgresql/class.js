@@ -46,8 +46,8 @@ export class ClassModel {
 		return { message: "Tabla 'classes' creada" }
 	}
 
-	static async createClass(classData) {
-		const { userId, title, subject, startAt, end, date, description } = classData
+	static async createClass({ input }) {
+		const { userId, title, subject, startAt, end, date, description } = input
 
 		const subjectName = subject
 			.toUpperCase()
