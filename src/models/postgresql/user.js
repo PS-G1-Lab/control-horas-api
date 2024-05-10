@@ -224,7 +224,7 @@ export class UserModel {
 			return { error: "Usuario no encontrado" }
 		}
 
-		return { userData: userData.userData }
+		return { userData }
 	}
 
 	static async encryptPassword(password) {
