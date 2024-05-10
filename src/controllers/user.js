@@ -68,8 +68,6 @@ export class UserController {
 
 		const input = { password, userId: userExists.userId.user_id }
 
-		return res.status(200).json({ input })
-
 		const checkPassword = await UserModel.checkPasswordByUserId({ input })
 
 		if (checkPassword.error) {
@@ -78,9 +76,9 @@ export class UserController {
 
 		const sessionToken = await UserModel.getSessionToken(userExists.userId)
 
-		// if (sessionToken.error) {
-		// 	return res.status(500).json({ error: sessionToken.error })
-		// }
+		if (sessionToken.error) {
+			return res.status(500).json({ error: sessionToken.error })
+		}
 
 		res.status(200).json({
 			sessionToken: sessionToken.sessionToken,
