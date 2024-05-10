@@ -124,7 +124,7 @@ export class UserModel {
 			return { status: 500, error: "Error de servidor" }
 		}
 
-		return { status: 400, error: dbPassword.rows[0], error2: encryptedPassword }
+		return { status: 400, error: dbPassword.rows[0].password, error2: encryptedPassword }
 
 		if (dbPassword.rows[0] !== encryptedPassword) {
 			return { status: 400, error: "Contraseña incorrecta" }
