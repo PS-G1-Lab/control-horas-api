@@ -56,11 +56,17 @@ export class UserController {
 	static async login(req, res) {
 		const { email, password } = req.body
 
+		if (email === undefined || password === undefined) {
+			return res.status(400).json({ error: "Faltan datos" })
+		}
+
 		const userExists = await UserModel.getUserIdByEmail(email)
 
 		if (userExists.error) {
 			return res.status(404).json({ error: userExists.error })
 		}
+
+		return res.status(200).json(userExists)
 
 		const input = { password, userId: userExists.userId }
 
