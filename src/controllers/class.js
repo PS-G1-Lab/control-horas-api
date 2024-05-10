@@ -1,4 +1,4 @@
-import { ClassModel } from "../models/turso/class.js"
+import { ClassModel } from "../models/postgresql/class.js"
 
 import { validateClass } from "../schemas/class.js"
 
