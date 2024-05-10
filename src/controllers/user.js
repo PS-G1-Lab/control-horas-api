@@ -74,8 +74,7 @@ export class UserController {
 			return res.status(checkPassword.status).json({ error: checkPassword.error })
 		}
 
-		//funciona hasta aquí
-		const sessionToken = await UserModel.getSessionToken(userExists.userId)
+		const sessionToken = await UserModel.getSessionToken(input.userId)
 
 		if (sessionToken.error) {
 			return res.status(500).json({ error: sessionToken.error })
@@ -83,7 +82,7 @@ export class UserController {
 
 		res.status(200).json({
 			sessionToken: sessionToken.sessionToken,
-			userId: userExists.userId,
+			userId: input.userId,
 			message: "User logged in",
 		})
 	}
