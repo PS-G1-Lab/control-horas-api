@@ -155,6 +155,12 @@ export class UserModel {
 	static async deleteUserSession({ input }) {
 		const { sessionToken, userId } = input
 
+		const validateUserSession = await this.validateUserSession({ input })
+
+		if (validateUserSession.error) {
+			return { error: "Usuario no encontrado" }
+		}
+
 		const deleteSessionToken = await client
 			.query(
 				`
