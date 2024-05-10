@@ -1,49 +1,37 @@
 import dotenv from "dotenv"
-import pg from "pg"
+import { Client } from "pg"
 
-dotenv.config({ path: "./././.env" })
-
-const { Client } = pg
+dotenv.config({ path: "./.env" })
 
 const client = new Client({
-	host: process.env.DB_HOST,
-	port: process.env.DB_PORT,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
-	database: process.env.DB_DATABASE,
-	connectionString: process.env.DB_CONNECTION_STRING,
+	connectionString: process.env.POSTGRES_URL,
 })
 
-await client.connect()
+client.connect()
 
 export class ClassModel {
 	static async init() {
-		const createClassesTable = await client
-			.query(
-				`
-				CREATE TABLE IF NOT EXISTS classes (
-					class_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-					user_id INTEGER NOT NULL,
-					title TEXT NOT NULL,
-					subject TEXT NOT NULL,
-					students INTEGER DEFAULT 0,
-					start_at TEST NOT NULL,
-					end TEST NOT NULL,
-					date TEST NOT NULL,
-					description TEXT DEFAULT NULL,
-					FOREIGN KEY (user_id) REFERENCES users(user_id)
-				);
-				`
-			)
-			.catch((error) => {
-				return { error }
-			})
+		const createClassesTable = `
+      CREATE TABLE IF NOT EXISTS classes (
+        class_id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        students INTEGER DEFAULT 0,
+        start_at TIMESTAMP NOT NULL,
+        end TIMESTAMP NOT NULL,
+        date TIMESTAMP NOT NULL,
+        description TEXT DEFAULT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+    `
 
-		if (createClassesTable.error) {
-			return { error: "Error al crear la tabla 'classes'" }
+		try {
+			await client.query(createClassesTable)
+			return { message: "Tabla 'classes' creada" }
+		} catch (error) {
+			return { error }
 		}
-
-		return { message: "Tabla 'classes' creada" }
 	}
 
 	static async createClass(classData) {
@@ -55,22 +43,18 @@ export class ClassModel {
 			.normalize("NFD")
 			.replace(/[\u0300-\u036F]/g, "")
 
-		const createClass = await client
-			.query(
+		try {
+			await client.query(
 				`
         INSERT INTO classes (user_id, title, subject, start_at, end, date, description)
-				VALUES ($1, $2, $3, $4, $5, $6, $7)
-				`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `,
 				[userId, title, subjectName, startAt, end, date, description]
 			)
-			.catch((error) => {
-				return { error }
-			})
-
-		if (createClass.error) {
+			return { message: "Clase creada" }
+		} catch (error) {
+			console.log(error)
 			return { error: "Error al crear clase" }
 		}
-
-		return { message: "Clase creada" }
 	}
 }
