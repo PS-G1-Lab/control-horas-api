@@ -20,7 +20,7 @@ const classSchema = z.object({
 		}),
 	students: z.number().int().positive().optional(),
 	startAt: z.string(),
-	end: z.string(),
+	endTime: z.string(),
 	date: z.string(),
 	description: z.string(),
 })
