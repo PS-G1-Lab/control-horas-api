@@ -61,7 +61,7 @@ export class ClassModel {
         INSERT INTO classes (user_id, title, subject, start_at, end_time, date, description)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         `,
-				[userId, title, subjectName, startAt, end, date, description]
+				[userId, title, subjectName, startAt, endTime, date, description]
 			)
 			.catch((error) => {
 				return { error }
