@@ -55,11 +55,11 @@ export class ClassModel {
 			.normalize("NFD")
 			.replace(/[\u0300-\u036F]/g, "")
 
-		const newUser = await client
+		const newClass = await client
 			.query(
 				`
         INSERT INTO classes (user_id, title, subject, start_at, end_time, date, description)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
         `,
 				[userId, title, subjectName, startAt, endTime, date, description]
 			)
@@ -67,7 +67,7 @@ export class ClassModel {
 				return { error }
 			})
 
-		if (newUser.error) {
+		if (newClass.error) {
 			return { error: "Error al crear clase" }
 		}
 
