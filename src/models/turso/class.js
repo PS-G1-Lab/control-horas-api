@@ -20,9 +20,9 @@ export class ClassModel {
 					title TEXT NOT NULL,
 					subject TEXT NOT NULL,
 					students INTEGER DEFAULT 0,
-					start_at TEST NOT NULL,
-					end TEST NOT NULL,
-					date TEST NOT NULL,
+					start_at TEXT NOT NULL,
+					end TEXT NOT NULL,
+					date TEXT NOT NULL,
 					description TEXT DEFAULT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(user_id)
 				);
