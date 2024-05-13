@@ -19,7 +19,9 @@ export class ClassController {
 		if (!classData.success)
 			return res.status(400).json({ error: JSON.parse(classData.error.message) })
 
-		const newClass = await ClassModel.createClass(classData.data)
+		const input = { ...classData.data }
+
+		const newClass = await ClassModel.createClass({ input })
 
 		if (newClass.error) {
 			return res.status(500).json({ error: newClass.error })
