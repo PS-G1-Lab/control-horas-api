@@ -47,7 +47,7 @@ export class ClassModel {
 	}
 
 	static async createClass({ input }) {
-		const { userId, title, subject, startAt, end, date, description } = input
+		const { userId, title, subject, startAt, endTime, date, description } = input
 
 		const subjectName = subject
 			.toUpperCase()
