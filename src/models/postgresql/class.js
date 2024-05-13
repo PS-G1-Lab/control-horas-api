@@ -58,7 +58,7 @@ export class ClassModel {
 		const newUser = await client
 			.query(
 				`
-        INSERT INTO classes (user_id, title, subject, start_at, end, date, description)
+        INSERT INTO classes (user_id, title, subject, start_at, end_time, date, description)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         `,
 				[userId, title, subjectName, startAt, end, date, description]
