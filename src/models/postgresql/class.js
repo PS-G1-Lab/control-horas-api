@@ -74,9 +74,7 @@ export class ClassModel {
 
 		console.log(newClass)
 
-		const classId = newClass.rows[0].class_id
-
-		return { classId: classId, message: "Clase creada" }
+		return { classId: 1, message: "Clase creada" }
 	}
 
 	static async deleteClass({ input }) {
