@@ -72,9 +72,27 @@ export class ClassModel {
 			return { error: "Error al crear clase" }
 		}
 
-		console.log(newClass)
+		const classId = this.getLastClassIdAdded()
 
-		return { classId: 1, message: "Clase creada" }
+		return { classId, message: "Clase creada" }
+	}
+
+	static async getLastClassIdAdded() {
+		const lastClassId = await client
+			.query(
+				`
+				SELECT class_id FROM classes ORDER BY class_id DESC LIMIT 1;
+				`
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (lastClassId.error) {
+			return { error: "Error al buscar última clase" }
+		}
+
+		return lastClassId.rows[0].class_id
 	}
 
 	static async deleteClass({ input }) {
