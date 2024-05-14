@@ -72,7 +72,11 @@ export class ClassModel {
 			return { error: "Error al crear clase" }
 		}
 
-		return { classId: newClass.classId, message: "Clase creada" }
+		console.log(newClass)
+
+		const classId = newClass.rows[0].class_id
+
+		return { classId: classId, message: "Clase creada" }
 	}
 
 	static async deleteClass({ input }) {
