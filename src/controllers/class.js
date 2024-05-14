@@ -1,5 +1,4 @@
 import { ClassModel } from "../models/postgresql/class.js"
-
 import { validateClass } from "../schemas/class.js"
 
 export class ClassController {
@@ -16,8 +15,9 @@ export class ClassController {
 	static async createClass(req, res) {
 		const classData = validateClass(req.body)
 
-		if (!classData.success)
+		if (!classData.success) {
 			return res.status(400).json({ error: JSON.parse(classData.error.message) })
+		}
 
 		const input = { ...classData.data }
 
@@ -28,5 +28,21 @@ export class ClassController {
 		}
 
 		return res.status(201).json(newClass)
+	}
+
+	static async deleteClass(req, res) {
+		const { classId } = req.params
+
+		const { userId, sessionToken } = req.body
+
+		const input = { classId, userId, sessionToken }
+
+		const deletedClass = await ClassModel.deleteClass({ input })
+
+		if (deletedClass.error) {
+			return res.status(deletedClass.status).json({ error: deletedClass.error })
+		}
+
+		return res.status(200).json(deletedClass)
 	}
 }
