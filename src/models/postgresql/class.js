@@ -1,7 +1,8 @@
 import dotenv from "dotenv"
 import pg from "pg"
+import { UserModel } from "./user.js"
 
-dotenv.config({ path: "./.env" })
+dotenv.config({ path: "./././.env" })
 
 const { Client } = pg
 
@@ -71,6 +72,52 @@ export class ClassModel {
 			return { error: "Error al crear clase" }
 		}
 
-		return { message: "Clase creada" }
+		return { classId: newClass.classId, message: "Clase creada" }
+	}
+
+	static async deleteClass({ input }) {
+		const { classId, userId, sessionToken } = input
+
+		const userClass = await client
+			.query(
+				`
+				SELECT user_id FROM classes WHERE class_id = $1;
+				`,
+				[classId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (userClass.error) {
+			return { status: 500, error: "Error al buscar clase" }
+		}
+
+		if (userClass.rows[0].user_id !== userId) {
+			return { status: 403, error: "No tienes permisos para eliminar esta clase" }
+		}
+
+		const userSession = await UserModel.validateUserSession({ input: { userId, sessionToken } })
+
+		if (userSession.error) {
+			return { status: 403, error: "Error al validar sesión" }
+		}
+
+		const deletedClass = await client
+			.query(
+				`
+				DELETE FROM classes WHERE class_id = $1;
+				`,
+				[classId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (deletedClass.error) {
+			return { status: 500, error: "Error al eliminar clase" }
+		}
+
+		return { message: "Clase eliminada" }
 	}
 }
