@@ -92,6 +92,8 @@ export class ClassModel {
 			return { error: "Error al buscar última clase" }
 		}
 
+		//TODO
+
 		return lastClassId
 	}
 
