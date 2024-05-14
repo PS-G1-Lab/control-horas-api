@@ -72,7 +72,7 @@ export class ClassModel {
 			return { error: "Error al crear clase" }
 		}
 
-		const classId = this.getLastClassIdAdded()
+		const classId = await this.getLastClassIdAdded()
 
 		return { classId, message: "Clase creada" }
 	}
@@ -92,7 +92,7 @@ export class ClassModel {
 			return { error: "Error al buscar última clase" }
 		}
 
-		return lastClassId.rows[0].class_id
+		return lastClassId
 	}
 
 	static async deleteClass({ input }) {
