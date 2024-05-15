@@ -13,7 +13,7 @@ export class ClassController {
 	}
 
 	static async createClass(req, res) {
-		req.body.userId = Number(req.body.userId)
+		req.body.userId = +req.body.userId
 
 		const classData = validateClass(req.body)
 
