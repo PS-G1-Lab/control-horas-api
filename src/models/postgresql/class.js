@@ -123,7 +123,11 @@ export class ClassModel {
 			return { status: 500, error: "Error al buscar clase" }
 		}
 
-		const dbUserId = userClass.rows[0].user_id
+		try {
+			const dbUserId = userClass.rows[0].user_id
+		} catch (error) {
+			const dbUserId = undefined
+		}
 
 		if (dbUserId === undefined) {
 			return { status: 404, error: "Clase no encontrada" }
