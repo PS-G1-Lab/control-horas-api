@@ -74,6 +74,10 @@ export class ClassModel {
 
 		const classId = await this.getLastClassIdAdded()
 
+		if (classId.error) {
+			return { error: classId.error }
+		}
+
 		return { classId, message: "Clase creada" }
 	}
 
@@ -92,9 +96,13 @@ export class ClassModel {
 			return { error: "Error al buscar última clase" }
 		}
 
-		//TODO
+		const classId = lastClassId.rows[0].class_id
 
-		return lastClassId
+		if (classId === undefined) {
+			return { error: "Error al obtener id de clase" }
+		}
+
+		return classId
 	}
 
 	static async deleteClass({ input }) {
