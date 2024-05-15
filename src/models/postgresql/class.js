@@ -123,7 +123,13 @@ export class ClassModel {
 			return { status: 500, error: "Error al buscar clase" }
 		}
 
-		if (userClass.rows[0].user_id !== userId) {
+		const dbUserId = userClass.rows[0].user_id
+
+		if (dbUserId === undefined) {
+			return { status: 404, error: "Clase no encontrada" }
+		}
+
+		if (dbUserId !== userId) {
 			return { status: 403, error: "No tienes permisos para eliminar esta clase" }
 		}
 
