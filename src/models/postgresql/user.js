@@ -296,7 +296,7 @@ export class UserModel {
 			return { error: "Error al buscar usuario" }
 		}
 
-		const email = dbData.rows[0]
+		const email = dbData.rows[0].email
 
 		if (email === undefined) {
 			return { error: "Usuario no encontrado" }

@@ -107,15 +107,11 @@ export class ClassController {
 			return res.status(500).json({ error: email.error })
 		}
 
-		console.log(email)
-
 		const classData = await ClassModel.getClassById({ input })
 
 		if (classData.error) {
 			return res.status(500).json({ error: classData.error })
 		}
-
-		console.log(classData)
 
 		const mailData = { title: classData.title, email }
 
