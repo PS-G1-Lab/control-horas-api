@@ -169,7 +169,7 @@ export class ClassModel {
 		const classes = await client
 			.query(
 				`
-        SELECT * FROM classes WHERE user_id = $1;
+        SELECT * FROM classes WHERE user_id = $1 ORDER BY class_id DESC;
         `,
 				[userId]
 			)
@@ -188,7 +188,7 @@ export class ClassModel {
 		const classes = await client
 			.query(
 				`
-        SELECT * FROM classes;
+        SELECT * FROM classes ORDER BY class_id DESC;
         `
 			)
 			.catch((error) => {
