@@ -49,7 +49,7 @@ export class ClassController {
 	}
 
 	static async getClasses(req, res) {
-		const { userId } = req.body
+		const { userId } = req.params
 
 		const input = { userId }
 
