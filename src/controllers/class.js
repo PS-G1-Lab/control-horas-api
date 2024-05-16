@@ -93,14 +93,6 @@ export class ClassController {
 	static async inscribeUser(req, res) {
 		const { classId, userId } = req.body
 
-		const input = { classId, userId }
-
-		const inscribed = await ClassModel.inscribeUserToClass({ input })
-
-		if (inscribed.error) {
-			return res.status(500).json({ error: inscribed.error })
-		}
-
 		const email = await UserModel.getEamilByUserId({ input })
 
 		if (email.error) {
@@ -113,11 +105,15 @@ export class ClassController {
 			return res.status(500).json({ error: classData.error })
 		}
 
-		const mailData = { title: classData.title, email: email.email }
+		const input = { classId, userId, title: classData.title, email: email.email }
 
-		console.log(mailData)
+		const inscribed = await ClassModel.inscribeUserToClass({ input })
 
-		const mail = await sendMailNextClass({ mailData })
+		if (inscribed.error) {
+			return res.status(500).json({ error: inscribed.error })
+		}
+
+		const mail = await sendMailNextClass({ input })
 
 		if (mail.error) {
 			return res.status(500).json({ error: mail.error })
