@@ -115,8 +115,6 @@ export class ClassController {
 
 		const mailData = { title: classData.title, email: email.email }
 
-		console.log(mailData)
-
 		const mail = await sendMailNextClass({ mailData })
 
 		if (mail.error) {
