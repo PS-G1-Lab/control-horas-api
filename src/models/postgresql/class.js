@@ -165,6 +165,7 @@ export class ClassModel {
 
 	static async getClassesByUserId({ input }) {
 		const { userId } = input
+
 		const classes = await client
 			.query(
 				`
@@ -180,6 +181,6 @@ export class ClassModel {
 			return { error: "Error al buscar clases" }
 		}
 
-		return classes.rows
+		return classes
 	}
 }

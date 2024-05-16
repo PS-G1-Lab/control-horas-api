@@ -56,7 +56,7 @@ export class ClassController {
 		const classes = await ClassModel.getClassesByUserId({ input })
 
 		if (classes.error) {
-			return res.status(classes.status).json({ error: classes.error })
+			return res.status(500).json({ error: classes.error })
 		}
 
 		return res.status(200).json(classes)
