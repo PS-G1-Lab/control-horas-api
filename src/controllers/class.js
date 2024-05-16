@@ -91,7 +91,7 @@ export class ClassController {
 
 		const input = { classId }
 
-		const inscribed = await ClassModel.inscribeUser({ input })
+		const inscribed = await ClassModel.inscribeUserToClass({ input })
 
 		if (inscribed.error) {
 			return res.status(500).json({ error: inscribed.error })
