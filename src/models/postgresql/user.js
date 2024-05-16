@@ -277,4 +277,31 @@ export class UserModel {
 
 		return { message: "Contraseña actualizada" }
 	}
+
+	static async getEamilByUserId({ input }) {
+		const { userId } = input
+
+		const dbData = await client
+			.query(
+				`
+				SELECT email FROM users WHERE user_id = $1
+				`,
+				[userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const email = dbData.rows[0].email
+
+		if (email === undefined) {
+			return { error: "Usuario no encontrado" }
+		}
+
+		return { email }
+	}
 }

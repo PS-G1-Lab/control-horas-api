@@ -1,5 +1,9 @@
 import { ClassModel } from "../models/postgresql/class.js"
+import { UserModel } from "../models/postgresql/user.js"
+
 import { validateClass } from "../schemas/class.js"
+
+import { sendMailNextClass } from "../services/mail/sendMailNextClass.js"
 
 export class ClassController {
 	static async init(req, res) {
@@ -87,14 +91,35 @@ export class ClassController {
 	}
 
 	static async inscribeUser(req, res) {
-		const { classId } = req.body
+		const { classId, userId } = req.body
 
-		const input = { classId }
+		const input = { classId, userId }
 
 		const inscribed = await ClassModel.inscribeUserToClass({ input })
 
 		if (inscribed.error) {
 			return res.status(500).json({ error: inscribed.error })
+		}
+
+		const email = await UserModel.getEamilByUserId({ input })
+
+		if (email.error) {
+			return res.status(500).json({ error: email.error })
+		}
+
+		const classData = await ClassModel.getClassById({ input })
+
+		if (classData.error) {
+			return res.status(500).json({ error: classData.error })
+		}
+
+		input.title = classData.title
+		input.email = email.email
+
+		const mail = await sendMailNextClass({ input })
+
+		if (mail.error) {
+			return res.status(500).json({ error: mail.error })
 		}
 
 		return res.status(200).json(inscribed)
