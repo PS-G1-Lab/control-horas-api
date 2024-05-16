@@ -18,8 +18,6 @@ export const transporter = nodemailer.createTransport({
 })
 
 export async function sendMailNextClass({ input }) {
-	console.log(input)
-
 	const { title, email } = input
 
 	const __filename = fileURLToPath(import.meta.url)
