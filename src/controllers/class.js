@@ -61,4 +61,28 @@ export class ClassController {
 
 		return res.status(200).json(classes)
 	}
+
+	static async getAllClasses(req, res) {
+		const classes = await ClassModel.getAllClasses()
+
+		if (classes.error) {
+			return res.status(500).json({ error: classes.error })
+		}
+
+		return res.status(200).json(classes)
+	}
+
+	static async getClassById(req, res) {
+		const { classId } = req.params
+
+		const input = { classId }
+
+		const classData = await ClassModel.getClassById({ input })
+
+		if (classData.error) {
+			return res.status(500).json({ error: classData.error })
+		}
+
+		return res.status(200).json(classData)
+	}
 }

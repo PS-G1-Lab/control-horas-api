@@ -183,4 +183,43 @@ export class ClassModel {
 
 		return classes.rows
 	}
+
+	static async getAllClasses() {
+		const classes = await client
+			.query(
+				`
+        SELECT * FROM classes;
+        `
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (classes.error) {
+			return { error: "Error al buscar clases" }
+		}
+
+		return classes.rows
+	}
+
+	static async getClassById({ input }) {
+		const { classId } = input
+
+		const classData = await client
+			.query(
+				`
+        SELECT * FROM classes WHERE class_id = $1;
+        `,
+				[classId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (classData.error) {
+			return { error: "Error al buscar clase" }
+		}
+
+		return classData.rows[0]
+	}
 }
