@@ -85,4 +85,18 @@ export class ClassController {
 
 		return res.status(200).json(classData)
 	}
+
+	static async inscribeUser(req, res) {
+		const { classId } = req.body
+
+		const input = { classId }
+
+		const inscribed = await ClassModel.inscribeUser({ input })
+
+		if (inscribed.error) {
+			return res.status(500).json({ error: inscribed.error })
+		}
+
+		return res.status(200).json(inscribed)
+	}
 }

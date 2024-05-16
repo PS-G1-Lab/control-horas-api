@@ -222,4 +222,44 @@ export class ClassModel {
 
 		return classData.rows[0]
 	}
+
+	static async inscribeUserToClass({ input }) {
+		const { classId } = input
+
+		const classData = await client
+			.query(
+				`
+        SELECT students FROM classes WHERE class_id = $1;
+        `,
+				[classId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (classData.error) {
+			return { error: "Error al buscar clase" }
+		}
+
+		const students = classData.rows[0].students
+
+		const newStudents = students + 1
+
+		const inscribeUser = await client
+			.query(
+				`
+        UPDATE classes SET students = $1 WHERE class_id = $2;
+        `,
+				[newStudents, classId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (inscribeUser.error) {
+			return { error: "Error al inscribir usuario" }
+		}
+
+		return { message: "Usuario inscrito" }
+	}
 }
