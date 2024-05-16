@@ -181,6 +181,6 @@ export class ClassModel {
 			return { error: "Error al buscar clases" }
 		}
 
-		return classes
+		return classes.rows[0]
 	}
 }
