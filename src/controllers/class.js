@@ -113,7 +113,7 @@ export class ClassController {
 			return res.status(500).json({ error: classData.error })
 		}
 
-		const mailData = { title: classData.title, email }
+		const mailData = { title: classData.title, email: email.email }
 
 		console.log(mailData)
 
