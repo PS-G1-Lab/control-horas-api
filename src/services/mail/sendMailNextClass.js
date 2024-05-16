@@ -1,11 +1,25 @@
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import nodemailer from "nodemailer"
+
 import dotenv from "dotenv"
 
 dotenv.config({ path: "././././.env" })
 
+export const transporter = nodemailer.createTransport({
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true,
+	auth: {
+		user: process.env.MAIL,
+		pass: process.env.MAIL_AUTH_TOKEN,
+	},
+})
+
 export async function sendMailNextClass({ input }) {
+	console.log(input)
+
 	const { title, email } = input
 
 	const __filename = fileURLToPath(import.meta.url)
