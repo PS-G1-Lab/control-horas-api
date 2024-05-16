@@ -237,29 +237,4 @@ export class UserModel {
 		const encryptedPassword = createHash("sha512").update(password).digest("hex")
 		return encryptedPassword
 	}
-
-	static async getUserData(userName) {
-		const dbData = await client
-			.query(
-				`
-				SELECT user_name, email, role, is_verified FROM users WHERE user_name = $1
-				`,
-				[userName]
-			)
-			.catch((error) => {
-				return { error }
-			})
-
-		if (dbData.error) {
-			return { error: "Error al buscar usuario" }
-		}
-
-		const userData = dbData.rows[0]
-
-		if (userData === undefined) {
-			return { error: "Usuario no encontrado" }
-		}
-
-		return { userData }
-	}
 }

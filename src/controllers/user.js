@@ -114,16 +114,4 @@ export class UserController {
 
 		return res.status(200).json(userSession)
 	}
-
-	static async userData(req, res) {
-		const { userName } = req.params
-
-		const userData = await UserModel.getUserData(userName)
-
-		if (userData.error) {
-			return res.status(404).json({ error: userData.error })
-		}
-
-		return res.status(200).json(userData)
-	}
 }
