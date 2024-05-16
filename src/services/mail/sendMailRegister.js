@@ -91,7 +91,7 @@ function createHtmlTemplateStudent({ userName, email }) {
                               <h1 style="color: #2F2E41;">Busca tu primera clase.</h1>
                               <p style="font-size: 14px; color: #2F2E41;">Busca a tu profesor según tus necesidades, experiencia y presupuesto.</p>
                               <div style="font-family: 'Open Sans', sans-serif; background-color: #E6622E; padding: 5px; text-align: center; border-radius: 50px; width: 75px; border-color: #E6622E; ">
-                                <a href="#" style="text-decoration: none; color: white; border-color: #E6622E;">Buscar</a>
+                                <a href="https://control-horas-xi.vercel.app" style="text-decoration: none; color: white; border-color: #E6622E;">Buscar</a>
                               </div>
                               <p style="display: flex; justify-content: left; font-size: 14px; margin-top: 20px; color: #2F2E41; font-weight: bold;">Atte, el equipo de GestionAppmos.</p>
                           </td>
@@ -130,7 +130,7 @@ function createHtmlTemplateTeacher({ userName, email }) {
                               <h1 style="color: #2F2E41;">Crea tu primera clase.</h1>
                               <p style="font-size: 14px; color: #2F2E41;">Transmite tus conocimientos y gana dinero impartiendo clases particulares.</p>
                               <div style="font-family: 'Open Sans', sans-serif; background-color: #E6622E; padding: 5px; text-align: center; border-radius: 50px; width: 75px; border-color: #E6622E; ">
-                                <a href="#" style="text-decoration: none; color: white; border-color: #E6622E;">Crear</a>
+                                <a href="https://control-horas-xi.vercel.app" style="text-decoration: none; color: white; border-color: #E6622E;">Crear</a>
                               </div>
                               <p style="display: flex; justify-content: left; font-size: 14px; margin-top: 20px; color: #2F2E41; font-weight: bold;">Atte, el equipo de GestionAppmos.</p>
                           </td>
