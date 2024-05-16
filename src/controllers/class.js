@@ -47,4 +47,18 @@ export class ClassController {
 
 		return res.status(200).json(deletedClass)
 	}
+
+	static async getClasses(req, res) {
+		const { userId } = req.body
+
+		const input = { userId }
+
+		const classes = await ClassModel.getClassesByUserId({ input })
+
+		if (classes.error) {
+			return res.status(classes.status).json({ error: classes.error })
+		}
+
+		return res.status(200).json(classes)
+	}
 }

@@ -162,4 +162,24 @@ export class ClassModel {
 
 		return { message: "Clase eliminada" }
 	}
+
+	static async getClassesByUserId({ input }) {
+		const { userId } = input
+		const classes = await client
+			.query(
+				`
+        SELECT * FROM classes WHERE user_id = $1;
+        `,
+				[userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (classes.error) {
+			return { error: "Error al buscar clases" }
+		}
+
+		return classes.rows
+	}
 }
