@@ -33,7 +33,7 @@ export class ClassController {
 	}
 
 	static async deleteClass(req, res) {
-		const { classId } = req.params
+		const { classId } = req.body
 
 		const { userId, sessionToken } = req.body
 
@@ -73,7 +73,7 @@ export class ClassController {
 	}
 
 	static async getClassById(req, res) {
-		const { classId } = req.params
+		const { classId } = req.body
 
 		const input = { classId }
 

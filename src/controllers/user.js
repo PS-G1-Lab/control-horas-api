@@ -1,5 +1,5 @@
 import { UserModel } from "../models/postgresql/user.js"
-import { validatePasswordForm, validateUser } from "../schemas/user.js"
+import { validatePartialUser, validatePasswordForm, validateUser } from "../schemas/user.js"
 import { sendMailVerification } from "../services/mail/sendMailRegister.js"
 
 export class UserController {
@@ -113,5 +113,60 @@ export class UserController {
 		}
 
 		return res.status(200).json(userSession)
+	}
+
+	static async updateUser(req, res) {
+		const userData = validatePartialUser(req.body)
+
+		if (!userData.success) {
+			return res.status(400).json({ error: JSON.parse(userData.error.message) })
+		}
+
+		const { userName, email } = userData.data
+		const { userId, sessionToken } = req.body
+
+		const userSession = await UserModel.validateUserSession({ input: { userId, sessionToken } })
+
+		if (userSession.error) {
+			return res.status(403).json({ error: "Error al validar sesión" })
+		}
+
+		const input = { userId, userName, email }
+
+		const updateUser = await UserModel.updateUser({ input })
+
+		if (updateUser.error) {
+			return res.status(500).json({ error: updateUser.error })
+		}
+
+		res.status(200).json(updateUser)
+	}
+
+	static async updatePassword(req, res) {
+		const passwordForm = validatePasswordForm(req.body)
+
+		if (!passwordForm.success) {
+			return res.status(400).json({ error: JSON.parse(passwordForm.error.message) })
+		}
+
+		const { password } = passwordForm.data
+
+		const { userId, sessionToken } = req.body
+
+		const userSession = await UserModel.validateUserSession({ input: { userId, sessionToken } })
+
+		if (userSession.error) {
+			return res.status(403).json({ error: "Error al validar sesión" })
+		}
+
+		const input = { userId, password, sessionToken }
+
+		const updatePassword = await UserModel.updatePassword({ input })
+
+		if (updatePassword.error) {
+			return res.status(500).json({ error: updatePassword.error })
+		}
+
+		res.status(200).json(updatePassword)
 	}
 }

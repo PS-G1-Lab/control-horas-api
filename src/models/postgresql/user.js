@@ -237,4 +237,44 @@ export class UserModel {
 		const encryptedPassword = createHash("sha512").update(password).digest("hex")
 		return encryptedPassword
 	}
+
+	static async updateUser({ input }) {
+		const { userId, userName, email } = input
+
+		const updateUser = await client.query(
+			`
+        UPDATE users SET user_name = $1, email = $2 WHERE user_id = $3
+        `,
+			[userName, email, userId]
+		)
+
+		if (updateUser.error) {
+			return { error: "Error al actualizar usuario" }
+		}
+
+		return { userName }
+	}
+
+	static async updatePassword({ input }) {
+		const { userId, password } = input
+
+		const encryptedPassword = await this.encryptPassword(password)
+
+		const updateUser = await client
+			.query(
+				`
+        UPDATE users SET password = $1 WHERE user_id = $2
+        `,
+				[encryptedPassword, userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (updateUser.error) {
+			return { error: "Error al actualizar contraseña" }
+		}
+
+		return { message: "Contraseña actualizada" }
+	}
 }
