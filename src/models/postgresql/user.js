@@ -1,22 +1,26 @@
-import { createHash, randomUUID } from "node:crypto"
-
 import dotenv from "dotenv"
-const { Pool } = require("pg")
+import { createHash, randomUUID } from "node:crypto"
+import pg from "pg"
 
-dotenv.config({ path: "../../../.env" })
+dotenv.config({ path: "./././.env" })
 
-const db = Pool({
-	user: process.env.RENDER_DB_USER,
-	password: process.env.RENDER_DB_PASSWORD,
-	host: process.env.RENDER_DB_HOST,
-	port: process.env.RENDER_DB_PORT,
-	database: process.env.RENDER_DB,
+const { Client } = pg
+
+const client = new Client({
+	host: process.env.DB_HOST,
+	port: process.env.DB_PORT,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_DATABASE,
+	connectionString: process.env.DB_CONNECTION_STRING,
 })
+
+await client.connect()
 
 export class UserModel {
 	static async init() {
-		const createUsersTable = await db
-			.none(
+		const createUsersTable = await client
+			.query(
 				`
 				CREATE TABLE IF NOT EXISTS users (
 					user_id SERIAL PRIMARY KEY,
@@ -31,7 +35,7 @@ export class UserModel {
 					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					session_token UUID UNIQUE DEFAULT NULL
-				);
+				);		
 				`
 			)
 			.catch((error) => {
@@ -39,7 +43,7 @@ export class UserModel {
 			})
 
 		if (createUsersTable.error) {
-			return { error: createUsersTable.error }
+			return { error: "Error al crear tabla 'users'" }
 		}
 
 		return { message: "Tabla 'users' creada" }
@@ -50,11 +54,11 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
-		const newUser = await db
-			.none(
+		const newUser = await client
+			.query(
 				`
 				INSERT INTO users (user_name, email, password, role)
-				VALUES ($1, $2, $3, $4)
+				VALUES ($1, $2, $3, $4);
 				`,
 				[userName, email, encryptedPassword, +role]
 			)
@@ -63,15 +67,21 @@ export class UserModel {
 			})
 
 		if (newUser.error) {
-			return { error: "Error al crear el usuario" }
+			return { error: "Error al crear usuario" }
+		}
+
+		const userId = await this.getUserIdByEmail(email)
+
+		if (userId.error) {
+			return { error: "Error al crear usuario" }
 		}
 
 		return { message: "Usuario creado" }
 	}
 
 	static async getUserIdByEmail(email) {
-		const dbData = await db
-			.oneOrNone(
+		const dbData = await client
+			.query(
 				`
 				SELECT user_id FROM users WHERE email = $1
 				`,
@@ -81,7 +91,11 @@ export class UserModel {
 				return { error }
 			})
 
-		const userId = dbData?.user_id
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userId = dbData.rows[0]
 
 		if (userId === undefined) {
 			return { error: "Usuario no encontrado" }
@@ -95,8 +109,8 @@ export class UserModel {
 
 		const encryptedPassword = await this.encryptPassword(password)
 
-		const dbPassword = await db
-			.oneOrNone(
+		const dbPassword = await client
+			.query(
 				`
 				SELECT password FROM users WHERE user_id = $1
 				`,
@@ -110,7 +124,7 @@ export class UserModel {
 			return { status: 500, error: "Error de servidor" }
 		}
 
-		if (dbPassword?.password !== encryptedPassword) {
+		if (dbPassword.rows[0].password !== encryptedPassword) {
 			return { status: 400, error: "Contraseña incorrecta" }
 		}
 
@@ -120,8 +134,8 @@ export class UserModel {
 	static async getSessionToken(userId) {
 		const sessionToken = randomUUID()
 
-		const insertSessionToken = await db
-			.none(
+		const insertSessionToken = await client
+			.query(
 				`
 				UPDATE users SET session_token = $1 WHERE user_id = $2
 				`,
@@ -138,11 +152,38 @@ export class UserModel {
 		return { sessionToken }
 	}
 
+	static async deleteUserSession({ input }) {
+		const { sessionToken, userId } = input
+
+		const validateUserSession = await this.validateUserSession({ input })
+
+		if (validateUserSession.error) {
+			return { error: "Usuario no encontrado" }
+		}
+
+		const deleteSessionToken = await client
+			.query(
+				`
+				UPDATE users SET session_token = NULL WHERE session_token = $1 AND user_id = $2
+				`,
+				[sessionToken, userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (deleteSessionToken.error) {
+			return { error: "Error al cerrar sesión" }
+		}
+
+		return { message: "Sesión cerrada" }
+	}
+
 	static async getUserNameByUserId({ input }) {
 		const { userId } = input
 
-		const dbData = await db
-			.oneOrNone(
+		const dbData = await client
+			.query(
 				`
 				SELECT user_name FROM users WHERE user_id = $1
 				`,
@@ -152,7 +193,11 @@ export class UserModel {
 				return { error }
 			})
 
-		const userName = dbData?.user_name
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userName = dbData.rows[0]
 
 		if (userName === undefined) {
 			return { error: "Usuario no encontrado" }
@@ -162,20 +207,24 @@ export class UserModel {
 	}
 
 	static async validateUserSession({ input }) {
-		const { sessionToken, userName } = input
+		const { sessionToken, userId } = input
 
-		const dbData = await db
-			.oneOrNone(
+		const dbData = await client
+			.query(
 				`
-				SELECT user_name, email, role, is_verified FROM users WHERE session_token = $1 AND user_name = $2
+				SELECT user_name, email, role, is_verified FROM users WHERE session_token = $1 AND user_id = $2
 				`,
-				[sessionToken, userName]
+				[sessionToken, userId]
 			)
 			.catch((error) => {
 				return { error }
 			})
 
-		const userData = dbData
+		if (dbData.error) {
+			return { error: "Error al buscar usuario" }
+		}
+
+		const userData = dbData.rows[0]
 
 		if (userData === undefined) {
 			return { error: "Usuario no encontrado" }
@@ -187,5 +236,45 @@ export class UserModel {
 	static async encryptPassword(password) {
 		const encryptedPassword = createHash("sha512").update(password).digest("hex")
 		return encryptedPassword
+	}
+
+	static async updateUser({ input }) {
+		const { userId, userName, email } = input
+
+		const updateUser = await client.query(
+			`
+        UPDATE users SET user_name = $1, email = $2 WHERE user_id = $3
+        `,
+			[userName, email, userId]
+		)
+
+		if (updateUser.error) {
+			return { error: "Error al actualizar usuario" }
+		}
+
+		return { userName }
+	}
+
+	static async updatePassword({ input }) {
+		const { userId, password } = input
+
+		const encryptedPassword = await this.encryptPassword(password)
+
+		const updateUser = await client
+			.query(
+				`
+        UPDATE users SET password = $1 WHERE user_id = $2
+        `,
+				[encryptedPassword, userId]
+			)
+			.catch((error) => {
+				return { error }
+			})
+
+		if (updateUser.error) {
+			return { error: "Error al actualizar contraseña" }
+		}
+
+		return { message: "Contraseña actualizada" }
 	}
 }

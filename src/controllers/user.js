@@ -1,9 +1,6 @@
-import { validatePasswordForm, validateUser } from "../schemas/user.js"
-
+import { UserModel } from "../models/postgresql/user.js"
+import { validatePartialUser, validatePasswordForm, validateUser } from "../schemas/user.js"
 import { sendMailVerification } from "../services/mail/sendMailRegister.js"
-
-import { UserModel } from "../models/turso/user.js"
-// import { UserModel } from "../models/postgresql/user.js"
 
 export class UserController {
 	static async init(req, res) {
@@ -43,14 +40,14 @@ export class UserController {
 
 		const newUser = await UserModel.createUser({ input })
 
+		if (newUser.error) {
+			return res.status(500).json({ error: newUser.error })
+		}
+
 		const mail = await sendMailVerification({ input })
 
 		if (mail.error) {
 			return res.status(500).json({ error: mail.error })
-		}
-
-		if (newUser.error) {
-			return res.status(500).json({ error: newUser.error })
 		}
 
 		res.status(201).json({ message: newUser.message })
@@ -59,13 +56,17 @@ export class UserController {
 	static async login(req, res) {
 		const { email, password } = req.body
 
+		if (email === undefined || password === undefined) {
+			return res.status(400).json({ error: "Faltan datos" })
+		}
+
 		const userExists = await UserModel.getUserIdByEmail(email)
 
 		if (userExists.error) {
 			return res.status(404).json({ error: userExists.error })
 		}
 
-		const input = { password, userId: userExists.userId }
+		const input = { password, userId: userExists.userId.user_id }
 
 		const checkPassword = await UserModel.checkPasswordByUserId({ input })
 
@@ -73,7 +74,7 @@ export class UserController {
 			return res.status(checkPassword.status).json({ error: checkPassword.error })
 		}
 
-		const sessionToken = await UserModel.getSessionToken(userExists.userId)
+		const sessionToken = await UserModel.getSessionToken(input.userId)
 
 		if (sessionToken.error) {
 			return res.status(500).json({ error: sessionToken.error })
@@ -81,27 +82,9 @@ export class UserController {
 
 		res.status(200).json({
 			sessionToken: sessionToken.sessionToken,
-			userId: userExists.userId,
+			userId: input.userId,
 			message: "User logged in",
 		})
-	}
-
-	static async data(req, res) {
-		const { sessionToken, userName } = req.body
-
-		if (sessionToken === undefined || userName === undefined) {
-			return res.status(401).json({ error: "No tiene sesión activa" })
-		}
-
-		const input = { sessionToken, userName }
-
-		const userSession = await UserModel.validateUserSession({ input })
-
-		if (userSession.error) {
-			return res.status(403).json({ error: userSession.error })
-		}
-
-		return res.status(200).json(userSession)
 	}
 
 	static async checkSession(req, res) {
@@ -109,14 +92,81 @@ export class UserController {
 
 		const input = { sessionToken, userId }
 
-		console.log(input)
-
 		const userSession = await UserModel.validateUserSession({ input })
 
 		if (userSession.error) {
-			return res.status(403).json({ error: userSession.error })
+			return res.status(400).json({ error: userSession.error })
 		}
 
 		return res.status(200).json(userSession)
+	}
+
+	static async logout(req, res) {
+		const { sessionToken, userId } = req.body
+
+		const input = { sessionToken, userId }
+
+		const userSession = await UserModel.deleteUserSession({ input })
+
+		if (userSession.error) {
+			return res.status(400).json({ error: userSession.error })
+		}
+
+		return res.status(200).json(userSession)
+	}
+
+	static async updateUser(req, res) {
+		const userData = validatePartialUser(req.body)
+
+		if (!userData.success) {
+			return res.status(400).json({ error: JSON.parse(userData.error.message) })
+		}
+
+		const { userName, email } = userData.data
+		const { userId, sessionToken } = req.body
+
+		const userSession = await UserModel.validateUserSession({ input: { userId, sessionToken } })
+
+		if (userSession.error) {
+			return res.status(403).json({ error: "Error al validar sesión" })
+		}
+
+		const input = { userId, userName, email }
+
+		const updateUser = await UserModel.updateUser({ input })
+
+		if (updateUser.error) {
+			return res.status(500).json({ error: updateUser.error })
+		}
+
+		res.status(200).json(updateUser)
+	}
+
+	static async updatePassword(req, res) {
+		const passwordForm = validatePasswordForm(req.body)
+
+		if (!passwordForm.success) {
+			return res.status(400).json({ error: JSON.parse(passwordForm.error.message) })
+		}
+
+		const { password } = passwordForm.data
+
+		const { userId, sessionToken } = req.body
+
+		const userSession = await UserModel.validateUserSession({ input: { userId, sessionToken } })
+
+		if (userSession.error) {
+			return res.status(403).json({ error: "Error al validar sesión" })
+		}
+
+		const input = { userId, password, sessionToken }
+
+		const updatePassword = await UserModel.updatePassword({ input })
+
+		if (updatePassword.error) {
+			return res.status(500).json({ error: updatePassword.error })
+		}
+
+		res.status(200).json(updatePassword)
 	}
 }

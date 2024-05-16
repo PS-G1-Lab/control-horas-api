@@ -15,6 +15,7 @@ app.use(json())
 app.use(urlencoded({ extended: true }))
 
 app.use(corsMiddleware())
+
 app.use("/db", dbRouter)
 app.use("/user", userRouter)
 app.use("/class", classRouter)

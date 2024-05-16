@@ -5,8 +5,8 @@ import dotenv from "dotenv"
 dotenv.config({ path: "./././.env" })
 
 const db = createClient({
-	url: process.env.DB_URL,
-	authToken: process.env.DB_AUTH_TOKEN,
+	url: process.env.TURSO_URL,
+	authToken: process.env.TURSO_TOKEN,
 })
 
 export class ClassModel {
@@ -19,10 +19,10 @@ export class ClassModel {
 					user_id INTEGER NOT NULL,
 					title TEXT NOT NULL,
 					subject TEXT NOT NULL,
-					students TEXT DEFAULT "",
-					start_at TIMESTAMP NOT NULL,
-					end TIMESTAMP NOT NULL,
-					date DATE NOT NULL,
+					students INTEGER DEFAULT 0,
+					start_at TEXT NOT NULL,
+					end TEXT NOT NULL,
+					date TEXT NOT NULL,
 					description TEXT DEFAULT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(user_id)
 				);

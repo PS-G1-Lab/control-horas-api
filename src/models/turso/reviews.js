@@ -8,8 +8,8 @@ dotenv.config({ path: "./././.env" })
 
 const db = () => {
 	return createClient({
-		url: process.env.DB_URL,
-		authToken: process.env.DB_AUTH_TOKEN,
+		url: process.env.TURSO_URL,
+		authToken: process.env.TURSO_TOKEN,
 	})
 }
 
