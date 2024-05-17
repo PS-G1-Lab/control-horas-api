@@ -135,7 +135,7 @@ export class ClassModel {
 			return { status: 404, error: "Clase no encontrada" }
 		}
 
-		if (dbUserId !== userId) {
+		if (dbUserId !== +userId) {
 			return { status: 403, error: "No tienes permisos para eliminar esta clase" }
 		}
 
